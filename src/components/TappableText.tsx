@@ -169,7 +169,7 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
           onClick={(e) => e.stopPropagation()}
           className={[
             'cursor-pointer rounded-sm',
-            card ? 'underline decoration-accent/60 decoration-dotted underline-offset-4' : '',
+            card ? 'underline decoration-accent/50 decoration-dotted decoration-[1.5px] underline-offset-[5px]' : '',
             inDrag ? 'bg-accent/25' : 'active:bg-accent-soft',
           ].join(' ')}
         >
@@ -203,7 +203,7 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
   return (
     <div
       ref={container}
-      className="text-[18px] leading-[1.75]"
+      className="font-reading text-[19px] leading-[1.6] text-reading"
       style={{ WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none' }}
     >
       {paragraphs.map((para, pi) => {
@@ -212,9 +212,9 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
         const glossOpen = showAllGloss || open.has(pid)
         const hasGloss = para.some((seg) => seg.en)
         return (
-          <div key={pid} data-para={pid} className="mb-4">
+          <div key={pid} data-para={pid} className="mb-6">
             {(dialogue ? para.map((seg) => [seg]) : [para]).map((line, li, lines) => (
-              <p key={line[0]!.id} className={dialogue ? 'pl-3 -indent-3' : ''}>
+              <p key={line[0]!.id} className={dialogue ? 'pl-4 -indent-4 [&+p]:mt-1' : ''}>
                 {line.map((seg, si) =>
                   renderSentence(
                     seg,
@@ -227,8 +227,8 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
                           toggleGloss(pid)
                         }}
                         aria-label="Ver traducción"
-                        className={`ml-2 inline-flex h-5 items-center rounded-full px-1.5 align-middle indent-0 text-[10px] font-semibold uppercase tracking-wide ${
-                          open.has(pid) ? 'bg-accent text-on-accent' : 'bg-line text-muted'
+                        className={`relative ml-1.5 inline-flex h-[18px] items-center rounded-full border px-1.5 align-[2px] indent-0 font-sans text-[9px] font-semibold uppercase tracking-wider before:absolute before:-inset-3 before:content-[''] ${
+                          open.has(pid) ? 'border-accent bg-accent text-on-accent' : 'border-line text-muted/80'
                         }`}
                       >
                         en
@@ -239,9 +239,9 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
               </p>
             ))}
             {hasGloss && glossOpen && (
-              <div className="mt-1 text-[15px] leading-snug text-muted">
+              <div className="mt-2 border-l-2 border-line pl-3 font-sans text-[15px] leading-normal text-muted">
                 {dialogue ? (
-                  para.map((seg) => seg.en && <p key={seg.id} className="pl-3">{seg.en}</p>)
+                  para.map((seg) => seg.en && <p key={seg.id}>{seg.en}</p>)
                 ) : (
                   <p>{para.map((seg) => seg.en).filter(Boolean).join(' ')}</p>
                 )}

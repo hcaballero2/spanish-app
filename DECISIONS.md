@@ -166,3 +166,9 @@ this file records what was picked where the plan left room.
 - **Top-bar timer continues across visits** (Hazel, 2026-10-30: it reset on
   every entry). It shows the all-time total for the item, or today's review
   total on the review screen, read from earlier `sessions` rows on mount.
+
+## Reading polish (2026-10-30, Hazel's request)
+- Reading/listening text uses Literata (book serif) at 19px, line-height 1.6, warm off-black `--color-reading` (#2e2723 light, #e4dbd0 dark). Hazel picked this over a sans option.
+- Font is self-hosted from `@fontsource-variable/literata`, Latin subset only (52 KB woff2, precached), falling back to Georgia — works offline, no Google Fonts request.
+- EN chips are outlined and smaller, with an enlarged invisible hit area; the gloss is a quiet left-ruled block in the UI sans.
+- The "tap a word…" hint shows only until the learner has 3 cards.

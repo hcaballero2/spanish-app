@@ -54,9 +54,10 @@ export default function ReadingScreen() {
           </>
         }
       />
-      <main className="mx-auto max-w-md p-5 pb-32">
-        <p className="mb-5 text-xs text-muted">
-          Toca una palabra para guardarla · mantén presionado y arrastra para una frase · {item.estimatedMinutes} min
+      <main className="mx-auto max-w-md px-6 pb-32 pt-7">
+        <h1 className="font-reading text-[26px] font-semibold leading-tight text-reading">{item.title}</h1>
+        <p className="mb-7 mt-2 text-xs text-muted">
+          {item.estimatedMinutes} min{cards.length < 3 ? ' · toca una palabra para guardarla; mantén y arrastra para una frase' : ''}
         </p>
 
         <TappableText segments={item.segments} known={known} onSelect={setSel} showAllGloss={showGloss} />

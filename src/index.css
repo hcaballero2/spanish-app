@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Reading serif (Literata, SIL OFL), Latin subset only: it covers Spanish
+   accents, ñ, ¿¡, «» and em dashes. Bundled so it works offline. */
+@font-face {
+  font-family: 'Literata Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(../node_modules/@fontsource-variable/literata/files/literata-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
 /* Design tokens. Light values live in @theme (which also generates the
    Tailwind utilities); dark values override the same custom properties. */
 @theme {
@@ -13,6 +24,9 @@
   --color-line: #e6dfd6;
   --color-ok: #2f855a;
   --color-ok-soft: #e3f3ea;
+  /* Long-form text: a touch softer than ink to cut glare. */
+  --color-reading: #2e2723;
+  --font-reading: 'Literata Variable', Georgia, 'Times New Roman', serif;
 }
 
 @layer base {
@@ -32,6 +46,7 @@
       --color-line: #3a332e;
       --color-ok: #6fcf97;
       --color-ok-soft: #1f3a2b;
+      --color-reading: #e4dbd0;
     }
   }
 
@@ -48,6 +63,7 @@
     --color-line: #3a332e;
     --color-ok: #6fcf97;
     --color-ok-soft: #1f3a2b;
+    --color-reading: #e4dbd0;
   }
 }
 
