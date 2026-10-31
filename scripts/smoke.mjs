@@ -440,14 +440,15 @@ try {
   await step('Speaking monologue: record, playback, model answer, self-rating, re-record replaces', async () => {
     await evaluate(`location.hash = '#/speak/cc-speaking-monologo'`)
     await waitForText('Monólogo')
-    if (await evaluate(`document.body.innerText.includes('Respuesta modelo')`)) throw new Error('model answer shown before recording')
+    if (await evaluate(`document.body.innerText.includes('Una respuesta posible')`)) throw new Error('model answer shown before recording')
     await evaluate(clickButton('🎤 Empezar a hablar'))
     await waitForText('Grabando')
     await waitForText('Meta: 60 s')
     await sleep(1200)
     await evaluate(clickButton('● Grabando'))
     await waitForText('Tu grabación')
-    await waitForText('Respuesta modelo')
+    await waitForText('Una respuesta posible')
+    if (!(await evaluate(`[...document.querySelectorAll('button')].some(b => b.textContent.includes('🔊 Modelo'))`))) throw new Error('no model play button')
     await waitForText('¿Cómo te fue?')
     if (!(await evaluate(`!!document.querySelector('audio[src^="blob:"]')`))) throw new Error('no playback')
     await evaluate(clickButton('Bien'))
@@ -484,21 +485,36 @@ try {
     await evaluate(`MediaRecorder.prototype.stop = window.__stop; navigator.mediaDevices.getUserMedia = window.__gum`)
   })
 
-  await step('Speaking dialogue: partner lines, one reply per turn, per-turn model answers', async () => {
+  await step('Speaking dialogue: each reply shows a model to compare, then waits for Siguiente', async () => {
     await evaluate(`location.hash = '#/speak/cc-speaking-dialogo'`)
     await evaluate(clickButton('▶ Empezar diálogo'))
     await waitForText('¿Qué le damos?')
+    const buttons = `[...document.querySelectorAll('button')].map(b => b.textContent)`
     for (let i = 0; i < 5; i++) {
-      await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.startsWith('🎤 Responder'))`, 'responder ' + i)
+      await waitFor(`${buttons}.some(t => t.startsWith('🎤 Responder'))`, 'responder ' + i)
       await evaluate(clickButton('🎤 Responder'))
       await waitForText('Grabando')
       await sleep(400)
       await evaluate(clickButton('● Grabando'))
       await waitFor(`document.querySelectorAll('audio').length === ${i + 1}`, 'reply audio ' + i)
+      const label = i === 4 ? 'Terminar ✓' : 'Siguiente ▶'
+      await waitFor(`${buttons}.includes('${label}')`, 'next button ' + i)
+      // No auto-advance: the next partner line waits for the learner.
+      if (await evaluate(`${buttons}.some(t => t.startsWith('🎤 Responder'))`)) throw new Error('advanced without Siguiente at ' + i)
+      const boxes = await evaluate(`[...document.querySelectorAll('*')].filter(e => e.children.length === 0 && e.textContent === 'Una respuesta posible (no la única)').length`)
+      if (boxes !== i + 1) throw new Error(`expected ${i + 1} model boxes, got ${boxes}`)
+      if (i === 0) {
+        await waitForText('Me da cuatro tacos de pastor')
+        // Re-recording the same turn replaces it and keeps the learner on it.
+        await evaluate(clickButton('🎤 Otra vez'))
+        await waitForText('Grabando')
+        await sleep(400)
+        await evaluate(clickButton('● Grabando'))
+        await waitFor(`${buttons}.includes('Siguiente ▶')`, 'still on turn 0')
+      }
+      await evaluate(clickButton(label))
     }
     await waitForText('Repetir el diálogo')
-    await waitForText('Respuesta modelo')
-    await waitForText('Me da cuatro tacos de pastor')
     const turns = (await evaluate(recordingsOf('cc-speaking-dialogo'))).map((r) => r[0]).sort()
     if (JSON.stringify(turns) !== '["turn-0","turn-1","turn-2","turn-3","turn-4"]') throw new Error('turn recordings: ' + JSON.stringify(turns))
   })
@@ -514,6 +530,10 @@ try {
     await waitForText('Sombra')
     const n = await evaluate(`[...document.querySelectorAll('button')].filter(b => b.textContent.includes('Escuchar y repetir')).length`)
     if (n !== 6) throw new Error('shadow sentences: ' + n)
+    // Headless Chrome has no voice, so this also covers "voice fails → still records" without getting stuck.
+    await evaluate(clickButton('🎤 Escuchar y repetir'))
+    await waitForText('🔊 Original', 15000)
+    if ((await evaluate(recordingsOf('cc-speaking-sombra'))).length !== 1) throw new Error('shadow recording not saved')
     await evaluate(`location.hash = '#/stats'`)
     await waitForText('Habla')
     await waitForText('3.0')

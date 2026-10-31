@@ -128,7 +128,6 @@ function SpeakingItem({ itemId }: { itemId: string }) {
         {mode === 'dialogue' && <Dialogue {...props} />}
         {mode === 'shadow' && <Shadow {...props} />}
 
-        {attempted && item.modelAnswer && <ModelAnswer item={item} say={say} />}
         {attempted && <SelfRating itemId={item.id} value={progress?.selfRating} />}
 
         <AddWord itemId={item.id} themeId={item.themeId} texts={exampleTexts} onSaved={(w) => flash(`«${w}» guardada`)} />
@@ -178,7 +177,32 @@ function RecordButton({ rec, idleLabel, disabled }: { rec: ReturnType<typeof use
   )
 }
 
-function Monologue({ item, urls, withTranscript }: ModeProps) {
+/** Your take next to one possible model, so you can hear the difference right away. */
+function Compare({ url, model, say, label = 'Tu respuesta' }: { url?: string; model?: string; say: (text: string) => void; label?: string }) {
+  return (
+    <div className="mt-3 flex flex-col gap-3">
+      {url && (
+        <div>
+          <p className="mb-1 text-xs text-muted">▶ {label}</p>
+          <audio controls src={url} className="w-full" aria-label={label} />
+        </div>
+      )}
+      {model && (
+        <div className="border-l-2 border-accent pl-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs text-muted">Una respuesta posible (no la única)</span>
+            <button type="button" onClick={() => say(model)} className="shrink-0 text-sm text-accent">
+              🔊 Modelo
+            </button>
+          </div>
+          <p className="mt-1 font-reading text-[17px] leading-snug text-reading">{model}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Monologue({ item, urls, withTranscript, say }: ModeProps) {
   const [lastTranscript, setLastTranscript] = useState('')
   const rec = useRecorder({
     withTranscript,
@@ -203,22 +227,22 @@ function Monologue({ item, urls, withTranscript }: ModeProps) {
       <RecordButton rec={rec} idleLabel={url ? '🎤 Grabar otra vez' : '🎤 Empezar a hablar'} />
       {rec.error && <p className="mt-2 text-sm text-accent">{rec.error}</p>}
       {rec.recording ? <Transcript text={rec.transcript} /> : <Transcript text={lastTranscript} />}
-      {url && !rec.recording && (
-        <div className="mt-3">
-          <p className="mb-1 text-xs text-muted">Tu grabación</p>
-          <audio controls src={url} className="w-full" />
-        </div>
-      )}
+      {url && !rec.recording && <Compare url={url} model={item.modelAnswer} say={say} label="Tu grabación" />}
     </section>
   )
 }
 
 function Dialogue({ item, urls, withTranscript, say }: ModeProps) {
   const lines = item.partnerLines ?? []
+  // modelAnswer holds one reply per partner line, separated by " / ".
+  const replies = (item.modelAnswer ?? '').split(/\s*\/\s*/)
   const firstMissing = lines.findIndex((_, i) => !urls.has(`turn-${i}`))
   // Resume where the learner left off; a finished dialogue shows every turn.
   const [turn, setTurn] = useState(firstMissing < 0 ? lines.length : firstMissing)
   const [started, setStarted] = useState(firstMissing > 0)
+  // The turn replied to in this run: show the comparison and wait for "Siguiente". Holding the
+  // turn number (not a flag) keeps a late save from an "Otra vez" from marking the next turn.
+  const [answeredTurn, setAnsweredTurn] = useState<number | null>(null)
   const [transcripts, setTranscripts] = useState<Record<number, string>>({})
   const turnRef = useRef(turn)
   turnRef.current = turn
@@ -229,19 +253,26 @@ function Dialogue({ item, urls, withTranscript, say }: ModeProps) {
       const t = turnRef.current
       setTranscripts((m) => ({ ...m, [t]: transcript }))
       await saveRecording(item.id, `turn-${t}`, blob)
-      const next = t + 1
-      setTurn(next)
-      if (next < lines.length) say(lines[next]!)
+      setAnsweredTurn(t)
     },
   })
 
   const begin = () => {
     setStarted(true)
+    setAnsweredTurn(null)
     setTurn(0)
     say(lines[0]!)
   }
 
+  const next = () => {
+    const n = turn + 1
+    setTurn(n)
+    if (n < lines.length) say(lines[n]!)
+  }
+
   const finished = turn >= lines.length
+  const last = turn === lines.length - 1
+  const answered = answeredTurn === turn
 
   return (
     <section className="mt-5">
@@ -250,10 +281,10 @@ function Dialogue({ item, urls, withTranscript, say }: ModeProps) {
           ▶ Empezar diálogo ({lines.length} turnos)
         </button>
       ) : (
-        <ol className="flex flex-col gap-3">
+        <ol className="flex flex-col gap-4">
           {lines.slice(0, Math.min(turn + 1, lines.length)).map((line, i) => {
             const url = urls.get(`turn-${i}`)
-            const current = i === turn
+            const current = i === turn && !finished
             return (
               <li key={i} className="flex flex-col gap-2">
                 <div className="flex items-start gap-2 self-start rounded-2xl rounded-tl-sm border border-line bg-card px-3 py-2">
@@ -262,16 +293,28 @@ function Dialogue({ item, urls, withTranscript, say }: ModeProps) {
                     🔊
                   </button>
                 </div>
-                {current && !finished ? (
+                {current && !answered ? (
                   <div className="self-stretch">
                     <RecordButton rec={rec} idleLabel="🎤 Responder" />
                     {rec.recording && <Transcript text={rec.transcript} />}
                   </div>
                 ) : (
                   url && (
-                    <div className="w-4/5 self-end">
-                      <audio controls src={url} className="w-full" aria-label={`Tu respuesta ${i + 1}`} />
-                      <Transcript text={transcripts[i] ?? ''} />
+                    <div className="self-stretch pl-6">
+                      {!(current && rec.recording) && <Compare url={url} model={replies[i]} say={say} label={`Tu respuesta ${i + 1}`} />}
+                      <Transcript text={current && rec.recording ? rec.transcript : (transcripts[i] ?? '')} />
+                      {current && (
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          <div className={rec.recording ? 'col-span-2' : ''}>
+                            <RecordButton rec={rec} idleLabel="🎤 Otra vez" />
+                          </div>
+                          {!rec.recording && (
+                            <button type="button" onClick={next} className="rounded-xl bg-accent px-4 py-3 font-medium text-on-accent">
+                              {last ? 'Terminar ✓' : 'Siguiente ▶'}
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )
                 )}
@@ -307,7 +350,9 @@ function Shadow({ item, urls, say }: ModeProps) {
 
   const go = (id: string, es: string) => {
     if (rec.recording) return
-    setActive({ id, phase: 'listening' })
+    // Update the ref now too: a voice failure can call back before the next render.
+    activeRef.current = { id, phase: 'listening' }
+    setActive(activeRef.current)
     say(es, () => {
       if (activeRef.current?.id !== id) return
       setActive({ id, phase: 'recording' })
@@ -340,40 +385,19 @@ function Shadow({ item, urls, say }: ModeProps) {
                   🎤 {url ? 'Otra vez' : 'Escuchar y repetir'}
                 </button>
               )}
-              {url && !mine && <audio controls src={url} className="mt-2 w-full" />}
+              {url && !mine && (
+                <div className="mt-2 flex items-center gap-2">
+                  <audio controls src={url} className="min-w-0 flex-1" aria-label={`Tu voz ${i + 1}`} />
+                  <button type="button" onClick={() => say(s.es)} className="shrink-0 text-sm text-accent">
+                    🔊 Original
+                  </button>
+                </div>
+              )}
             </div>
           </li>
         )
       })}
       {rec.error && <p className="text-sm text-accent">{rec.error}</p>}
     </ol>
-  )
-}
-
-function ModelAnswer({ item, say }: { item: Item; say: (text: string) => void }) {
-  const answer = item.modelAnswer ?? ''
-  const replies = item.mode === 'dialogue' ? answer.split(/\s*\/\s*/) : null
-  return (
-    <section className="mt-6 rounded-2xl border border-line bg-card p-4">
-      <div className="flex items-center justify-between">
-        <h2 className="font-semibold">Respuesta modelo</h2>
-        <button type="button" onClick={() => say(replies ? replies.join(' ') : answer)} className="text-sm text-accent">
-          🔊 Escuchar
-        </button>
-      </div>
-      <p className="mt-1 text-xs text-muted">Una forma posible, no la única.</p>
-      {replies ? (
-        <ol className="mt-3 flex flex-col gap-2 font-reading text-[17px] leading-snug text-reading">
-          {replies.map((r, i) => (
-            <li key={i}>
-              <span className="block font-sans text-xs text-muted">{item.partnerLines?.[i]}</span>
-              {r}
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="mt-3 font-reading text-[17px] leading-relaxed text-reading">{answer}</p>
-      )}
-    </section>
   )
 }
