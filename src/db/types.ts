@@ -83,12 +83,13 @@ export interface Item {
   exercises?: { q: string; a: string }[]
 }
 
+/** Mirrors the ts-fsrs v6 `Card` shape so it can be passed straight to the scheduler. */
 export interface FsrsState {
   due: Date
   stability: number
   difficulty: number
-  elapsed_days: number
   scheduled_days: number
+  learning_steps: number
   reps: number
   lapses: number
   state: number // ts-fsrs State enum: 0 New, 1 Learning, 2 Review, 3 Relearning

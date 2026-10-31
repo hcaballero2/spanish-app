@@ -1,0 +1,90 @@
+{
+  "id": "template-slug",
+  "order": 99,
+  "title": "English title",
+  "titleEs": "Título en español",
+  "level": "A2",
+  "description": "One or two sentences in English about what the theme covers.",
+  "cultureNote": "Short culture note in Spanish at the pack's level (≤120 words).",
+  "canDo": [
+    "Puedo ... (CEFR can-do statement for the self-assessment, 3–10 of them)"
+  ],
+  "sources": [
+    {
+      "title": "Resource name",
+      "url": "https://example.com",
+      "kind": "youtube",
+      "recommendedIn": "https://www.reddit.com/r/Spanish/comments/.../"
+    }
+  ],
+  "items": [
+    {
+      "id": "template-reading-1",
+      "skill": "reading",
+      "level": "A2",
+      "title": "Reading title",
+      "estimatedMinutes": 8,
+      "segments": [{ "id": "r1-1", "es": "Oración en español.", "en": "Sentence in English." }],
+      "questions": [{ "q": "¿...?", "options": ["a", "b", "c"], "answer": 0 }]
+    },
+    {
+      "id": "template-listening-1",
+      "skill": "listening",
+      "level": "A2",
+      "title": "Listening title",
+      "estimatedMinutes": 8,
+      "segments": [{ "id": "l1-1", "es": "Oración en español.", "en": "Sentence in English." }]
+    },
+    {
+      "id": "template-speaking-monologue",
+      "skill": "speaking",
+      "level": "A2",
+      "title": "Speaking title",
+      "estimatedMinutes": 6,
+      "mode": "monologue",
+      "prompt": "Describe ...",
+      "modelAnswer": "Sample answer at level."
+    },
+    {
+      "id": "template-speaking-dialogue",
+      "skill": "speaking",
+      "level": "A2",
+      "title": "Dialogue title",
+      "estimatedMinutes": 6,
+      "mode": "dialogue",
+      "prompt": "Situation.",
+      "partnerLines": ["Line 1", "Line 2", "Line 3"],
+      "modelAnswer": "Sample replies."
+    },
+    {
+      "id": "template-writing-1",
+      "skill": "writing",
+      "level": "A2",
+      "title": "Writing title",
+      "estimatedMinutes": 10,
+      "prompt": "Escribe ...",
+      "minWords": 50,
+      "modelAnswer": "Sample text.",
+      "checklist": ["¿Usaste ...?", "¿Incluiste ...?"]
+    },
+    {
+      "id": "template-grammar-1",
+      "skill": "grammar",
+      "level": "A2",
+      "title": "Grammar point",
+      "estimatedMinutes": 5,
+      "explanation": "≤150 words.",
+      "examples": [
+        { "es": "Ejemplo 1", "en": "Example 1" },
+        { "es": "Ejemplo 2", "en": "Example 2" },
+        { "es": "Ejemplo 3", "en": "Example 3" },
+        { "es": "Ejemplo 4", "en": "Example 4" }
+      ],
+      "exercises": [
+        { "q": "___ dos tacos.", "a": "Me da" },
+        { "q": "...", "a": "..." },
+        { "q": "...", "a": "..." }
+      ]
+    }
+  ]
+}

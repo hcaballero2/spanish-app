@@ -1,0 +1,606 @@
+{
+  "id": "comida-callejera",
+  "order": 1,
+  "title": "Street food",
+  "titleEs": "Comida callejera",
+  "level": "A2",
+  "description": "Ordering tacos, elotes and quesadillas at a stand, the Sunday tianguis, prices and the little phrases Mexicans use around food.",
+  "cultureNote": "En México la comida de la calle es parte de la vida diaria. Mucha gente come de pie, junto al puesto, y platica con el taquero. Cuando alguien come cerca de ti, es normal decir «¡provecho!» y la respuesta es «gracias, igualmente». Casi todos los puestos aceptan solo efectivo. «Con todo» significa con cebolla y cilantro; en los elotes, con mayonesa, queso, chile y limón. El tianguis es un mercado en la calle que llega a cada colonia un día fijo de la semana.",
+  "canDo": [
+    "Puedo pedir comida en un puesto y decir qué quiero y qué no quiero.",
+    "Puedo preguntar cuánto cuesta algo y entender el precio.",
+    "Puedo entender una conversación corta y lenta entre un cliente y un vendedor.",
+    "Puedo describir mi comida favorita con frases sencillas.",
+    "Puedo escribir un mensaje corto para recomendar un lugar para comer."
+  ],
+  "sources": [
+    {
+      "title": "Easy Spanish (YouTube): street interviews in Mexico City",
+      "url": "https://www.youtube.com/@EasySpanish",
+      "kind": "youtube",
+      "recommendedIn": "https://www.reddit.com/r/Spanish/comments/16vw8r1/best_podcasts_to_learn_spanish/"
+    },
+    {
+      "title": "Dreaming Spanish: Beginner videos about Mexican food",
+      "url": "https://www.dreamingspanish.com",
+      "kind": "youtube",
+      "recommendedIn": "https://www.reddit.com/r/dreamingspanish/wiki/index"
+    },
+    {
+      "title": "Butterfly Spanish: Mexican food vocabulary",
+      "url": "https://www.youtube.com/@ButterflySpanish",
+      "kind": "youtube",
+      "recommendedIn": "https://www.reddit.com/r/Spanish/comments/105vks3/advice_for_a_fresh_beginner/"
+    }
+  ],
+  "items": [
+    {
+      "id": "cc-reading-tacos",
+      "skill": "reading",
+      "level": "A2",
+      "title": "Un taco en la esquina",
+      "estimatedMinutes": 8,
+      "segments": [
+        {
+          "id": "r1-01",
+          "es": "Son las ocho de la noche y tengo hambre.",
+          "en": "It's eight at night and I'm hungry."
+        },
+        {
+          "id": "r1-02",
+          "es": "En la esquina de mi casa hay un puesto de tacos.",
+          "en": "On the corner by my house there is a taco stand."
+        },
+        {
+          "id": "r1-03",
+          "es": "El taquero se llama don Chucho y siempre está de buen humor.",
+          "en": "The taco man is called don Chucho and he is always in a good mood."
+        },
+        {
+          "id": "r1-04",
+          "es": "—¿Qué le damos, joven? —me pregunta.",
+          "en": "\"What can we get you, young man?\" he asks me."
+        },
+        {
+          "id": "r1-05",
+          "es": "—Me da tres de pastor con todo, por favor.",
+          "en": "\"Give me three al pastor with everything, please.\""
+        },
+        {
+          "id": "r1-06",
+          "es": "«Con todo» quiere decir con cebolla, cilantro y piña.",
+          "en": "\"With everything\" means with onion, cilantro and pineapple."
+        },
+        {
+          "id": "r1-07",
+          "es": "Don Chucho corta la carne del trompo con un cuchillo muy grande.",
+          "en": "Don Chucho cuts the meat from the spit with a very big knife."
+        },
+        {
+          "id": "r1-08",
+          "es": "Yo pongo salsa verde en mis tacos, pero no mucha, porque pica.",
+          "en": "I put green salsa on my tacos, but not much, because it's spicy."
+        },
+        {
+          "id": "r1-09",
+          "es": "Los tacos cuestan quince pesos cada uno.",
+          "en": "The tacos cost fifteen pesos each."
+        },
+        {
+          "id": "r1-10",
+          "es": "Pago con un billete de cien y don Chucho me da el cambio.",
+          "en": "I pay with a hundred-peso bill and don Chucho gives me the change."
+        },
+        {
+          "id": "r1-11",
+          "es": "Como de pie, junto al puesto, como todos.",
+          "en": "I eat standing up, next to the stand, like everyone."
+        },
+        {
+          "id": "r1-12",
+          "es": "—¡Provecho! —dice una señora.",
+          "en": "\"Enjoy your meal!\" says a lady."
+        },
+        {
+          "id": "r1-13",
+          "es": "—Gracias, igualmente —le contesto con la boca llena.",
+          "en": "\"Thanks, same to you,\" I answer with my mouth full."
+        },
+        {
+          "id": "r1-14",
+          "es": "Estos tacos son los mejores de mi colonia.",
+          "en": "These tacos are the best in my neighborhood."
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Qué quiere decir «con todo» en los tacos?",
+          "options": [
+            "Con cebolla, cilantro y piña",
+            "Con queso y crema",
+            "Con mucha salsa"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "¿Cuánto cuesta cada taco?",
+          "options": [
+            "Cien pesos",
+            "Quince pesos",
+            "Tres pesos"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Cómo come la persona?",
+          "options": [
+            "Sentada en una mesa",
+            "En su casa",
+            "De pie, junto al puesto"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "cc-reading-tianguis",
+      "skill": "reading",
+      "level": "A2",
+      "title": "El tianguis del domingo",
+      "estimatedMinutes": 8,
+      "segments": [
+        {
+          "id": "r2-01",
+          "es": "Cada domingo hay un tianguis cerca de mi casa.",
+          "en": "Every Sunday there is a street market near my house."
+        },
+        {
+          "id": "r2-02",
+          "es": "Un tianguis es un mercado en la calle, con muchos puestos.",
+          "en": "A tianguis is a market in the street, with many stalls."
+        },
+        {
+          "id": "r2-03",
+          "es": "Mi mamá y yo vamos temprano, a las nueve de la mañana.",
+          "en": "My mom and I go early, at nine in the morning."
+        },
+        {
+          "id": "r2-04",
+          "es": "Primero compramos fruta: mangos, papaya y plátanos.",
+          "en": "First we buy fruit: mangoes, papaya and bananas."
+        },
+        {
+          "id": "r2-05",
+          "es": "Después pasamos al puesto de quesadillas.",
+          "en": "Then we go on to the quesadilla stand."
+        },
+        {
+          "id": "r2-06",
+          "es": "Yo pido una de flor de calabaza y otra de champiñones.",
+          "en": "I order one with squash blossom and another with mushrooms."
+        },
+        {
+          "id": "r2-07",
+          "es": "La señora las hace a mano con masa azul.",
+          "en": "The lady makes them by hand with blue corn dough."
+        },
+        {
+          "id": "r2-08",
+          "es": "Mi mamá prefiere un tlacoyo con nopales y queso.",
+          "en": "My mom prefers a tlacoyo (thick oval corn cake) with cactus and cheese."
+        },
+        {
+          "id": "r2-09",
+          "es": "Para tomar, compramos agua de jamaica, muy fría.",
+          "en": "To drink, we buy hibiscus water, very cold."
+        },
+        {
+          "id": "r2-10",
+          "es": "Todo está muy rico y no es caro.",
+          "en": "Everything is very tasty and it isn't expensive."
+        },
+        {
+          "id": "r2-11",
+          "es": "Al final, mi mamá platica con la señora de las flores.",
+          "en": "At the end, my mom chats with the flower lady."
+        },
+        {
+          "id": "r2-12",
+          "es": "Regresamos a casa a las once, con las bolsas llenas.",
+          "en": "We go back home at eleven, with the bags full."
+        },
+        {
+          "id": "r2-13",
+          "es": "Para mí, el domingo sin tianguis no es domingo.",
+          "en": "For me, a Sunday without the tianguis isn't a Sunday."
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Qué es un tianguis?",
+          "options": [
+            "Un restaurante",
+            "Un mercado en la calle",
+            "Una tienda grande"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Qué pide la persona en el puesto de quesadillas?",
+          "options": [
+            "Una de flor de calabaza y una de champiñones",
+            "Dos de queso",
+            "Un tlacoyo"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "¿A qué hora regresan a casa?",
+          "options": [
+            "A las nueve",
+            "A las diez",
+            "A las once"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    {
+      "id": "cc-listening-elotes",
+      "skill": "listening",
+      "level": "A2",
+      "title": "En el puesto de elotes",
+      "estimatedMinutes": 8,
+      "segments": [
+        {
+          "id": "l1-01",
+          "es": "—Buenas tardes, ¿qué va a llevar?",
+          "en": "\"Good afternoon, what are you going to have?\""
+        },
+        {
+          "id": "l1-02",
+          "es": "—Un elote, por favor. ¿Cuánto cuesta?",
+          "en": "\"A corn on the cob, please. How much is it?\""
+        },
+        {
+          "id": "l1-03",
+          "es": "—Veinticinco pesos. ¿Con todo?",
+          "en": "\"Twenty-five pesos. With everything?\""
+        },
+        {
+          "id": "l1-04",
+          "es": "—Sí, con mayonesa, queso y chile.",
+          "en": "\"Yes, with mayonnaise, cheese and chili.\""
+        },
+        {
+          "id": "l1-05",
+          "es": "—¿Mucho chile o poquito?",
+          "en": "\"A lot of chili or just a little?\""
+        },
+        {
+          "id": "l1-06",
+          "es": "—Poquito, porque no aguanto lo picoso.",
+          "en": "\"Just a little, because I can't handle spicy food.\""
+        },
+        {
+          "id": "l1-07",
+          "es": "—¿Y limón?",
+          "en": "\"And lime?\""
+        },
+        {
+          "id": "l1-08",
+          "es": "—Sí, mucho limón, gracias.",
+          "en": "\"Yes, lots of lime, thanks.\""
+        },
+        {
+          "es": "—¿Y le pongo chile en polvo o salsa?",
+          "en": "\"And do I put chili powder or salsa on it?\"",
+          "id": "l1-09"
+        },
+        {
+          "es": "—Chile en polvo, por favor, del que no pica tanto.",
+          "en": "\"Chili powder, please, the kind that isn't so spicy.\"",
+          "id": "l1-10"
+        },
+        {
+          "id": "l1-11",
+          "es": "—¿Lo quiere en vaso o en palito?",
+          "en": "\"Do you want it in a cup or on a stick?\""
+        },
+        {
+          "id": "l1-12",
+          "es": "—En vaso, es más fácil para comer.",
+          "en": "\"In a cup, it's easier to eat.\""
+        },
+        {
+          "es": "—¿Quiere también unos esquites para llevar?",
+          "en": "\"Do you also want some esquites to go?\"",
+          "id": "l1-13"
+        },
+        {
+          "es": "—No, gracias, ahorita no. Solo el elote.",
+          "en": "\"No thanks, not right now. Just the corn.\"",
+          "id": "l1-14"
+        },
+        {
+          "id": "l1-15",
+          "es": "—Aquí tiene. Son veinticinco.",
+          "en": "\"Here you go. That's twenty-five.\""
+        },
+        {
+          "id": "l1-16",
+          "es": "—Gracias. ¡Está muy rico!",
+          "en": "\"Thanks. It's delicious!\""
+        },
+        {
+          "id": "l1-17",
+          "es": "—Gracias a usted. ¡Provecho!",
+          "en": "\"Thank you. Enjoy!\""
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Cuánto cuesta el elote?",
+          "options": [
+            "Quince pesos",
+            "Veinticinco pesos",
+            "Treinta pesos"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Cuánto chile quiere el cliente?",
+          "options": [
+            "Mucho",
+            "Poquito",
+            "Nada"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Cómo quiere el elote?",
+          "options": [
+            "En vaso",
+            "En palito",
+            "En plato"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "cc-listening-antojitos",
+      "skill": "listening",
+      "level": "A2",
+      "title": "Los antojitos de la noche",
+      "estimatedMinutes": 8,
+      "segments": [
+        {
+          "id": "l2-01",
+          "es": "Hola, soy Lupita y vivo en la colonia Roma, en la Ciudad de México.",
+          "en": "Hi, I'm Lupita and I live in the Roma neighborhood, in Mexico City."
+        },
+        {
+          "id": "l2-02",
+          "es": "Hoy les voy a platicar de mis antojitos favoritos.",
+          "en": "Today I'm going to tell you about my favorite snacks."
+        },
+        {
+          "id": "l2-03",
+          "es": "Un antojito es una comida pequeña que se come en la calle.",
+          "en": "An antojito is a small dish that you eat in the street."
+        },
+        {
+          "id": "l2-04",
+          "es": "Por la noche, en mi calle hay muchos puestos.",
+          "en": "At night, on my street there are many stands."
+        },
+        {
+          "id": "l2-05",
+          "es": "Mi favorito es el de tamales.",
+          "en": "My favorite is the tamale one."
+        },
+        {
+          "id": "l2-06",
+          "es": "Compro un tamal verde y un atole de chocolate.",
+          "en": "I buy a green tamale and a chocolate atole (warm corn drink)."
+        },
+        {
+          "id": "l2-07",
+          "es": "El señor grita: «¡Tamales oaxaqueños, tamales calientitos!».",
+          "en": "The man shouts: \"Oaxacan tamales, nice and hot tamales!\""
+        },
+        {
+          "id": "l2-08",
+          "es": "También me gustan los esquites, que son granos de elote en un vaso con limón y chile.",
+          "en": "I also like esquites, which are corn kernels in a cup with lime and chili."
+        },
+        {
+          "id": "l2-09",
+          "es": "Los fines de semana como churros con cajeta.",
+          "en": "On weekends I eat churros with cajeta (goat's milk caramel)."
+        },
+        {
+          "id": "l2-10",
+          "es": "Mi hermano prefiere los tacos de suadero, pero a mí no me gustan tanto.",
+          "en": "My brother prefers suadero (beef brisket) tacos, but I don't like them that much."
+        },
+        {
+          "id": "l2-11",
+          "es": "Comer en la calle es barato, rápido y muy rico.",
+          "en": "Eating in the street is cheap, fast and very tasty."
+        },
+        {
+          "id": "l2-12",
+          "es": "Ahorita tengo hambre otra vez. ¡Vamos por unos tacos!",
+          "en": "Right now I'm hungry again. Let's go get some tacos!"
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Dónde vive Lupita?",
+          "options": [
+            "En Oaxaca",
+            "En la colonia Roma",
+            "En Guadalajara"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Qué compra en su puesto favorito?",
+          "options": [
+            "Churros",
+            "Un tamal y un atole",
+            "Esquites"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Qué prefiere su hermano?",
+          "options": [
+            "Tacos de suadero",
+            "Tamales",
+            "Churros"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "cc-speaking-monologo",
+      "skill": "speaking",
+      "level": "A2",
+      "title": "Mi antojito favorito",
+      "estimatedMinutes": 6,
+      "mode": "monologue",
+      "prompt": "Describe tu antojito o comida callejera favorita: qué es, qué lleva, dónde lo compras y cuánto cuesta. Habla entre 60 y 90 segundos.",
+      "modelAnswer": "Mi antojito favorito son las quesadillas de flor de calabaza. Las compro en el tianguis los domingos. Una señora las hace a mano con masa azul y les pone queso y un poco de epazote. Yo les pongo salsa verde, pero poquita, porque pica mucho. Cuestan veinte pesos cada una y siempre pido dos. Para tomar, compro un agua de jamaica. Como de pie, junto al puesto, y platico con la señora. Para mí es la mejor comida de la semana."
+    },
+    {
+      "id": "cc-speaking-dialogo",
+      "skill": "speaking",
+      "level": "A2",
+      "title": "Pedir tacos en un puesto",
+      "estimatedMinutes": 6,
+      "mode": "dialogue",
+      "prompt": "Estás en un puesto de tacos por la noche. El taquero te habla; contesta cada línea en voz alta.",
+      "partnerLines": [
+        "¡Buenas noches! ¿Qué le damos?",
+        "¿Con todo o sin cebolla?",
+        "¿Quiere salsa verde o roja?",
+        "¿Algo de tomar?",
+        "Son sesenta pesos. ¿Paga con efectivo o con tarjeta?"
+      ],
+      "modelAnswer": "—Buenas noches. Me da cuatro tacos de pastor, por favor. / —Con todo, gracias. / —Verde, pero poquita, porque pica. / —Sí, un refresco de toronja, por favor. / —Con efectivo. Aquí tiene cien."
+    },
+    {
+      "id": "cc-speaking-sombra",
+      "skill": "speaking",
+      "level": "A2",
+      "title": "Repite: frases del puesto",
+      "estimatedMinutes": 5,
+      "mode": "shadow",
+      "prompt": "Escucha cada frase y repítela imitando el ritmo y la entonación.",
+      "segments": [
+        {
+          "id": "s1-01",
+          "es": "Me da tres de pastor con todo, por favor.",
+          "en": "Give me three al pastor with everything, please."
+        },
+        {
+          "id": "s1-02",
+          "es": "¿Cuánto cuesta el elote?",
+          "en": "How much is the corn?"
+        },
+        {
+          "id": "s1-03",
+          "es": "Poquito chile, porque no aguanto lo picoso.",
+          "en": "Just a little chili, because I can't handle spicy food."
+        },
+        {
+          "id": "s1-04",
+          "es": "¿Lo quiere en vaso o en palito?",
+          "en": "Do you want it in a cup or on a stick?"
+        },
+        {
+          "id": "s1-05",
+          "es": "Aquí tiene. Son veinticinco.",
+          "en": "Here you go. That's twenty-five."
+        },
+        {
+          "id": "s1-06",
+          "es": "¡Provecho! —Gracias, igualmente.",
+          "en": "Enjoy! —Thanks, same to you."
+        }
+      ]
+    },
+    {
+      "id": "cc-writing-mensaje",
+      "skill": "writing",
+      "level": "A2",
+      "title": "Un mensaje con recomendaciones",
+      "estimatedMinutes": 10,
+      "prompt": "Un amigo viene a visitarte este fin de semana. Escríbele un mensaje: recomiéndale dos antojitos, dile dónde comprarlos, cuánto cuestan y qué llevan. Mínimo 50 palabras.",
+      "minWords": 50,
+      "modelAnswer": "¡Hola, Dani! ¡Qué bueno que vienes el sábado! Te recomiendo dos cosas. Primero, los tacos de pastor del puesto de la esquina de mi casa. Cuestan quince pesos y llevan piña, cebolla y cilantro. Pide salsa verde, pero poquita. Segundo, el domingo vamos al tianguis por unas quesadillas de flor de calabaza; son de masa azul y cuestan veinte pesos. Lleva efectivo, porque no aceptan tarjeta. ¡Nos vemos!",
+      "checklist": [
+        "¿Mencionaste dos antojitos diferentes?",
+        "¿Dijiste dónde se compran y cuánto cuestan?",
+        "¿Usaste el presente para describir (lleva, cuesta, venden)?",
+        "¿Escribiste un saludo y una despedida?"
+      ]
+    },
+    {
+      "id": "cc-grammar-pedir",
+      "skill": "grammar",
+      "level": "A2",
+      "title": "Pedir comida: «me da», «quiero», «¿me pone...?»",
+      "estimatedMinutes": 5,
+      "explanation": "En México, para pedir comida en un puesto, lo más común es «me da» + lo que quieres: «Me da dos tacos». Es más suave que «quiero» y más natural que «¿puedo tener?». También se usa «¿me pone...?» cuando pides un extra: «¿Me pone más limón?». El vendedor pregunta «¿qué le damos?» o «¿qué va a llevar?»; «le» es por el trato de usted. Para decir que no quieres algo: «sin cebolla», «sin chile». Para decir cuánto: «poquito» (muy común) o «mucho». Al pagar: «¿cuánto es?» y el vendedor dice «son veinticinco».",
+      "examples": [
+        {
+          "es": "Me da un elote con todo, por favor.",
+          "en": "Give me a corn with everything, please."
+        },
+        {
+          "es": "¿Me pone más limón?",
+          "en": "Could you put more lime on it?"
+        },
+        {
+          "es": "Quiero dos quesadillas, una sin queso.",
+          "en": "I want two quesadillas, one without cheese."
+        },
+        {
+          "es": "¿Qué le damos, joven?",
+          "en": "What can we get you, young man?"
+        },
+        {
+          "es": "¿Cuánto es? —Son cuarenta pesos.",
+          "en": "How much is it? —It's forty pesos."
+        }
+      ],
+      "exercises": [
+        {
+          "q": "___ tres tacos de pastor, por favor. (pedir, forma común)",
+          "a": "Me da"
+        },
+        {
+          "q": "¿___ ___ más salsa? (pedir un extra)",
+          "a": "Me pone"
+        },
+        {
+          "q": "Un elote, pero ___ chile, por favor. (no quiero chile)",
+          "a": "sin"
+        },
+        {
+          "q": "¿Mucho limón? —No, ___. (una cantidad pequeña)",
+          "a": "poquito"
+        },
+        {
+          "q": "¿Cuánto ___? —Son veinticinco pesos.",
+          "a": "es"
+        }
+      ]
+    }
+  ]
+}
