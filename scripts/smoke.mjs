@@ -303,8 +303,75 @@ try {
     await waitForText('Escuchar y repetir')
   })
 
-  await step('Dark mode: setting switches tokens, theme-color and localStorage', async () => {
+  const idb = (body) => `(async () => {
+    const req = indexedDB.open('spanish-app')
+    const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error) })
+    const all = (store) => new Promise((res) => { const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess = () => res(r.result) })
+    ${body}
+  })()`
+
+  await step('Timer runs on a study screen and stores a reading session', async () => {
+    await evaluate(`location.hash = '#/read/cc-reading-tacos'`)
+    await waitForText('taquero')
+    if (!(await evaluate(`!!document.querySelector('[role="timer"]')`))) throw new Error('no timer on reading screen')
+    await sleep(3300)
+    const shown = await evaluate(`document.querySelector('[role="timer"]').textContent`)
+    if (!/^0:0[3-9]$/.test(shown)) throw new Error('timer shows ' + shown)
     await evaluate(`location.hash = '#/'`)
+    await waitForText('Meta diaria')
+    await sleep(300)
+    const rows = await evaluate(idb(`return (await all('sessions')).map(r => ({ skill: r.skill, itemId: r.itemId, seconds: r.seconds, ended: !!r.endedAt }))`))
+    const reading = rows.filter((r) => r.skill === 'reading' && r.itemId === 'cc-reading-tacos' && r.ended)
+    if (!reading.some((r) => r.seconds >= 3)) throw new Error('no ≥3 s reading session: ' + JSON.stringify(rows))
+  })
+
+  await step('Goal ring, per-skill bars and streak reflect session seconds', async () => {
+    // 23 min of reading today (over half the 45-min goal) and 30 min yesterday → streak 2.
+    await evaluate(idb(`
+      const tx = db.transaction('sessions', 'readwrite'); const s = tx.objectStore('sessions')
+      const now = new Date(); const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 12)
+      const t = new Date(now.getTime() - 60 * 60000)
+      s.add({ skill: 'reading', startedAt: t < new Date(now.getFullYear(), now.getMonth(), now.getDate()) ? now : t, endedAt: now, seconds: 23 * 60 })
+      s.add({ skill: 'listening', startedAt: y, endedAt: y, seconds: 30 * 60 })
+      await new Promise((res) => (tx.oncomplete = res))`))
+    await evaluate(`location.hash = '#/stats'`)
+    await waitForText('Estadísticas')
+    await evaluate(`location.hash = '#/'`)
+    const body = await waitForText('Racha de 2 días')
+    if (!/\n2[3-9] \/ 45 min/.test(body)) throw new Error('ring minutes wrong:\n' + body)
+    if (!body.includes('✓ 23 / 12 min')) throw new Error('reading bar not full:\n' + body)
+    if (!body.includes('faltan')) throw new Error('ring should not be full yet')
+  })
+
+  await step('Stats screen: streak, last 7 days, skills, cards', async () => {
+    await evaluate(`location.hash = '#/stats'`)
+    const body = await waitForText('Últimos 7 días')
+    for (const t of ['racha', 'hoy: 2', 'lectura', 'escucha', 'tarjetas', 'temas a2']) {
+      if (!body.includes(t)) throw new Error('missing ' + t + '\n' + body)
+    }
+    const bars = await evaluate(`document.querySelectorAll('button[aria-pressed]').length`)
+    if (bars !== 7) throw new Error('expected 7 day bars, got ' + bars)
+    await evaluate(`document.querySelectorAll('button[aria-pressed]')[5].click()`)
+    await waitForText(': 30 min')
+  })
+
+  await step('Settings: daily goal, split adjust, ring follows', async () => {
+    await evaluate(`location.hash = '#/settings'`)
+    await waitForText('Tiempo diario')
+    await evaluate(`document.querySelector('button[aria-label="Más Meta diaria"]').click()`)
+    await waitForText('la meta es 50')
+    await evaluate(clickButton('Ajustar'))
+    await sleep(300)
+    const split = await evaluate(idb(`return (await all('settings'))[0].split`))
+    const sum = Object.values(split).reduce((a, b) => a + b, 0)
+    if (sum !== 50 || split.grammar !== 0) throw new Error('split not scaled to 50: ' + JSON.stringify(split))
+    if (await evaluate(`document.body.innerText.includes('la meta es')`)) throw new Error('mismatch notice still shown')
+    await evaluate(`location.hash = '#/'`)
+    await waitForText('/ 50 min')
+  })
+
+  await step('Dark mode: setting switches tokens, theme-color and localStorage', async () => {
+    await evaluate(`location.hash = '#/settings'`)
     await waitForText('Apariencia')
     const light = await evaluate(`getComputedStyle(document.body).backgroundColor`)
     if (light !== 'rgb(250, 247, 242)') throw new Error('light paper wrong: ' + light)
@@ -328,8 +395,8 @@ try {
     const ls = await evaluate(`localStorage.getItem('theme')`)
     if (ls !== 'dark') throw new Error('localStorage theme: ' + ls)
     // Reload: the pre-paint script must apply dark before React does.
-    await send('Page.navigate', { url: base + '#/' })
-    await waitForText('Hoy')
+    await send('Page.navigate', { url: base + '#/settings' })
+    await waitForText('Apariencia')
     const early = await evaluate(`document.documentElement.dataset.theme`)
     if (early !== 'dark') throw new Error('data-theme after reload: ' + early)
     await evaluate(`(() => {

@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db/db'
 import type { Card } from '../../db/types'
 import TopBar from '../../components/TopBar'
+import Timer from '../../components/Timer'
 import { MC_ROUNDS, Rating, blankOut, buildQueue, correctCounts, formatSpan, previewDue, rateCard, type Grade } from '../../lib/fsrs'
 import { distractorPool, glossFor } from '../../lib/glossary'
 import { meaningMatches, pickDistractors, shuffled } from '../../lib/meaning'
@@ -136,9 +137,12 @@ export default function ReviewScreen() {
         title="Repaso"
         back="/"
         right={
-          <span className="text-xs text-muted">
-            {done + 1} / {total}
-          </span>
+          <>
+            <Timer skill="review" />
+            <span className="text-xs text-muted">
+              {done + 1} / {total}
+            </span>
+          </>
         }
       />
       <main className="mx-auto flex max-w-md flex-col gap-4 p-5 pb-32">

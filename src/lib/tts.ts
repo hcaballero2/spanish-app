@@ -2,6 +2,8 @@
 // a Spanish voice is installed). iOS only speaks in response to a user tap and
 // delivers the voice list asynchronously through `voiceschanged` (PLAN §4).
 
+import { noteActivity } from './sessions'
+
 let voices: SpeechSynthesisVoice[] = []
 
 function loadVoices(): void {
@@ -90,10 +92,12 @@ export function speakSegment(
 
   u.onstart = () => {
     started = true
+    noteActivity()
     if (alive) handlers.onStart?.()
   }
   u.onend = () => {
     window.clearTimeout(timer)
+    noteActivity()
     if (alive) {
       alive = false
       handlers.onEnd?.()

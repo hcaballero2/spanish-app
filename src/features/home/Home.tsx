@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useRegisterSW } from 'virtual:pwa-register/react'
-import { db, updateSettings } from '../../db/db'
-import { LEVELS, THEME_PREFS, type Level, type ThemePref } from '../../db/types'
+import { db } from '../../db/db'
 import { buildQueue } from '../../lib/fsrs'
 import InstallHint from '../../components/InstallHint'
+import GoalRing from '../../components/GoalRing'
+import { streak, todayTotals } from '../../lib/sessions'
 import LevelBadge from '../../components/LevelBadge'
 import { isStandalone } from '../../lib/platform'
 
@@ -26,6 +27,8 @@ export default function Home() {
     async () => (settings ? (await buildQueue(settings)).length : 0),
     [settings?.newCardsPerDay],
   )
+  const today = useLiveQuery(() => todayTotals(), [])
+  const streakDays = useLiveQuery(async () => (settings ? streak(settings.dailyMinutes) : 0), [settings?.dailyMinutes])
   const themesDone = useLiveQuery(() => db.themes.where('status').equals('done').count(), [])
   const [online, setOnline] = useState(navigator.onLine)
 
@@ -55,16 +58,18 @@ export default function Home() {
     <main className="mx-auto flex max-w-md flex-col gap-4 p-5">
       <header className="flex items-baseline justify-between">
         <h1 className="text-2xl font-bold">Hoy</h1>
-        <span className="text-xs text-muted">{online ? 'en línea' : 'sin conexión'}</span>
+        <div className="flex items-center gap-1">
+          <span className="mr-1 text-xs text-muted">{online ? 'en línea' : 'sin conexión'}</span>
+          <Link to="/stats" aria-label="Estadísticas" className="rounded-lg px-2 py-1 text-xl">
+            📊
+          </Link>
+          <Link to="/settings" aria-label="Ajustes" className="rounded-lg px-2 py-1 text-xl">
+            ⚙️
+          </Link>
+        </div>
       </header>
 
-      <section className="rounded-2xl bg-accent-soft p-4">
-        <p className="text-xs uppercase tracking-wide text-muted">Meta diaria</p>
-        <p className="text-3xl font-bold">
-          0 <span className="text-base font-normal text-muted">/ {settings.dailyMinutes} min</span>
-        </p>
-        <p className="mt-1 text-xs text-muted">El cronómetro llega en la fase 4.</p>
-      </section>
+      <GoalRing settings={settings} seconds={today?.seconds ?? 0} bySkill={today?.bySkill ?? {}} streak={streakDays ?? 0} />
 
       {theme ? (
         <section className="rounded-2xl border border-line bg-card p-4">
@@ -120,33 +125,6 @@ export default function Home() {
         )}
       </section>
 
-      <section className="rounded-2xl border border-line bg-card p-4">
-        <h2 className="mb-3 font-semibold">Nivel</h2>
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <LevelSelect label="Actual" value={settings.currentLevel} onChange={(v) => updateSettings({ currentLevel: v })} />
-          <LevelSelect label="Meta" value={settings.targetLevel} onChange={(v) => updateSettings({ targetLevel: v })} />
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-line bg-card p-4">
-        <h2 className="mb-3 font-semibold">Apariencia</h2>
-        <label className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-muted">Tema</span>
-          <select
-            aria-label="Tema"
-            value={settings.theme ?? 'system'}
-            onChange={(e) => updateSettings({ theme: e.target.value as ThemePref })}
-            className="rounded-lg border border-line bg-paper px-3 py-2 text-base"
-          >
-            {THEME_PREFS.map((t) => (
-              <option key={t} value={t}>
-                {THEME_LABEL[t]}
-              </option>
-            ))}
-          </select>
-        </label>
-      </section>
-
       <InstallHint />
 
       {needRefresh && (
@@ -156,26 +134,9 @@ export default function Home() {
       )}
 
       <footer className="mt-4 text-center text-xs text-muted">
-        Fase 3 · {isStandalone() ? 'instalada' : 'en navegador'}
+        Fase 4 · {isStandalone() ? 'instalada' : 'en navegador'}
         {offlineReady ? ' · lista sin conexión' : ''}
       </footer>
     </main>
-  )
-}
-
-const THEME_LABEL: Record<ThemePref, string> = { system: 'Como el sistema', light: 'Claro', dark: 'Oscuro' }
-
-function LevelSelect({ label, value, onChange }: { label: string; value: Level; onChange: (v: Level) => void }) {
-  return (
-    <label className="flex flex-col gap-1">
-      <span className="text-xs text-muted">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value as Level)} className="rounded-lg border border-line bg-paper px-3 py-2 text-base">
-        {LEVELS.map((l) => (
-          <option key={l} value={l}>
-            {l}
-          </option>
-        ))}
-      </select>
-    </label>
   )
 }

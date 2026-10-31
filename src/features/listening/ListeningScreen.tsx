@@ -10,6 +10,7 @@ import { markItemDone } from '../../lib/progress'
 import TappableText, { type Selection } from '../../components/TappableText'
 import LookupSheet from '../../components/LookupSheet'
 import TopBar from '../../components/TopBar'
+import Timer from '../../components/Timer'
 import LevelBadge from '../../components/LevelBadge'
 import GlossToggle from '../../components/GlossToggle'
 import Comprehension from '../../components/Comprehension'
@@ -204,6 +205,7 @@ export default function ListeningScreen() {
         back={`/theme/${item.themeId}`}
         right={
           <>
+            <Timer skill="listening" itemId={item.id} />
             <GlossToggle on={showGloss} onToggle={() => setShowGloss((v) => !v)} />
             <LevelBadge level={item.level} stretch={item.stretch} />
           </>

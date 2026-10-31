@@ -6,6 +6,7 @@ import { cardsByKey, deleteCard, saveCard, updateCardMeaning } from '../../lib/c
 import TappableText, { type Selection } from '../../components/TappableText'
 import LookupSheet from '../../components/LookupSheet'
 import TopBar from '../../components/TopBar'
+import Timer from '../../components/Timer'
 import LevelBadge from '../../components/LevelBadge'
 import Comprehension from '../../components/Comprehension'
 import DoneButton from '../../components/DoneButton'
@@ -47,6 +48,7 @@ export default function ReadingScreen() {
         back={`/theme/${item.themeId}`}
         right={
           <>
+            <Timer skill="reading" itemId={item.id} />
             <GlossToggle on={showGloss} onToggle={() => setShowGloss((v) => !v)} />
             <LevelBadge level={item.level} stretch={item.stretch} />
           </>

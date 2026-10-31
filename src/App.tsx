@@ -10,6 +10,8 @@ import ReadingScreen from './features/reading/ReadingScreen'
 import ListeningScreen from './features/listening/ListeningScreen'
 import ReviewScreen from './features/review/ReviewScreen'
 import VocabList from './features/vocab/VocabList'
+import SettingsScreen from './features/settings/SettingsScreen'
+import StatsScreen from './features/stats/StatsScreen'
 import ComingSoon from './features/soon/ComingSoon'
 
 export default function App() {
@@ -39,6 +41,8 @@ export default function App() {
         <Route path="/listen/:itemId" element={<ListeningScreen />} />
         <Route path="/review" element={<ReviewScreen />} />
         <Route path="/vocab" element={<VocabList />} />
+        <Route path="/settings" element={<SettingsScreen />} />
+        <Route path="/stats" element={<StatsScreen />} />
         <Route path="/soon/:itemId" element={<ComingSoon />} />
       </Routes>
     </HashRouter>

@@ -134,3 +134,32 @@ this file records what was picked where the plan left room.
   "Fácil" are no longer used.
 - **Reverse cards dropped**: PLAN §7.2's English-front cards (reps ≥ 3) are
   replaced by typed recall of the meaning, which is what Hazel asked for.
+
+## Phase 4 — timer, goal ring, settings, stats (2026-10-30)
+
+- **Session rows are written live.** A row is added when studying starts and
+  its `seconds` are flushed every 5 s, so a force-quit loses at most 5 s
+  (PLAN §10 "never trust a single long open tab"). `lib/sessions.ts`.
+- **Session ends** on unmount, `visibilitychange` → hidden, `pagehide`, or
+  2 min without a tap/scroll/key/audio event. Those 2 min still count (quiet
+  reading of a short text is study time); locking the phone stops the timer at
+  once, so a walk-away overcounts by at most 2 min. Any interaction resumes
+  with a new row.
+  Sessions are split at local midnight so "today" is a calendar day.
+  Rows that round to 0 s are deleted.
+- **Audio counts as interaction:** `speakSegment` start/end calls
+  `noteActivity()`, so listening without touching the screen keeps the timer running.
+- **Timed screens:** reading, listening, review (counts toward `split.review`).
+  Home, theme view, vocab, settings and stats are not study time.
+- **Streak:** consecutive days with ≥ 50 % of `dailyMinutes` (PLAN §10).
+  Today counts once it qualifies; until then the streak runs through
+  yesterday, so it does not drop to 0 in the morning.
+- **Daily goal and split are independent** (PLAN §6). The default split sums
+  to 47 min against a 45-min goal (PLAN §2 item 6), so Settings shows the
+  mismatch with an "Ajustar" button that rescales the split proportionally.
+  The goal ring uses `dailyMinutes`; the bars use `split[skill]`.
+- **Level and appearance moved from Home to Settings** (`/settings`); Home
+  gets 📊 Stats and ⚙️ Settings links. Export/import stays in phase 8.
+- **Stats chart:** one series (minutes per day), single accent hue, dashed
+  goal line, tap a bar to read its value (no per-bar labels). Bars turn
+  green (`ok`) on days the goal was met.
