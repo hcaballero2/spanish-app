@@ -142,6 +142,8 @@ export interface ItemProgress {
   recordingBlobId?: number
   tooHard?: boolean
   selfRating?: 1 | 2 | 3 | 4
+  /** Writing: indexes of the checklist lines the learner ticked (PLAN §7.5). */
+  checklistDone?: number[]
 }
 
 export interface ThemeProgress {
@@ -153,7 +155,7 @@ export interface ThemeProgress {
 export interface Recording {
   id?: number
   itemId: string
-  segmentId?: string // shadowing one sentence (listening); absent for whole-item speaking recordings
+  segmentId?: string // a shadowed sentence id, or `turn-N` for a dialogue reply; absent for a monologue
   blob: Blob
   createdAt: Date
 }

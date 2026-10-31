@@ -172,3 +172,19 @@ this file records what was picked where the plan left room.
 - Font is self-hosted from `@fontsource-variable/literata`, Latin subset only (52 KB woff2, precached), falling back to Georgia — works offline, no Google Fonts request.
 - EN chips are outlined and smaller, with an enlarged invisible hit area; the gloss is a quiet left-ruled block in the UI sans.
 - The "tap a word…" hint shows only until the learner has 3 cards.
+
+## Phase 5 — speaking and writing (2026-10-31)
+- Routes `/speak/:itemId` (monologue, dialogue, shadow) and `/write/:itemId`; both screens are keyed by item id so state never carries across items.
+- Only the latest recording per item + segment is kept (`segmentId`: sentence id for shadow, `turn-N` for dialogue, none for monologue). Saves storage on the phone. Listening shadow uses the same rule now.
+- Monologue target is 60 s (PLAN says 60–120; the A2 prompt asks for 60–90). A bar fills to the minute; recording can go past it.
+- Dialogue: one tap on "Empezar" speaks line 1 (iOS needs a tap for speech); each saved reply speaks the next line. Partner text stays visible (A2). If the voice fails, recording still works.
+- Shadow (speaking): tap → TTS → auto-record up to 8 s, same as listening.
+- The model answer and the 1–4 self-rating appear only after a recording exists (all turns, for a dialogue). Self-rating is stored in `itemProgress.selfRating` and shown on Stats as an average; it never touches FSRS.
+- Live transcript is opt-in (checkbox, remembered per device in localStorage), es-MX, labelled «aproximado». Off by default because running speech recognition and recording together on iOS is unproven.
+- Recording counts as study activity (the clock ticks `noteActivity` every second), so a long monologue never idles the timer.
+- "Añadir palabra" saves a card; its example is the first sentence in the item (prompt, model answer, partner lines, sentences) containing the word, else the prompt.
+- Writing: draft autosaves 600 ms after typing stops and on blur/leave (`itemProgress.userText`). Spellcheck and autocorrect are off so the learner writes accents themselves.
+- "Terminé · ver modelo" reveals the model and the checklist; ticks are stored as `itemProgress.checklistDone` (indexes, no schema change). Stats shows the % of checklist lines ticked. "Marcar como terminado" appears only after the reveal.
+- "Copiar para corregir" copies: «Corrige este texto en español mexicano, nivel {item level}, explica cada cambio.» + the task + the text. PLAN's example says B1; the item's level is used instead.
+- `markItemDone` now merges into the progress row instead of replacing it, so drafts, ticks and ratings survive.
+- Smoke uses Chrome's fake microphone flags and stubs `navigator.clipboard.writeText` (headless Chrome has no real clipboard).

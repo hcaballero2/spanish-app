@@ -7,6 +7,7 @@ import { cardsByKey, deleteCard, saveCard, updateCardMeaning } from '../../lib/c
 import { RATE_STEPS, speakSegment, ttsAvailable } from '../../lib/tts'
 import { recordingAvailable, startRecording, type ActiveRecording } from '../../lib/recorder'
 import { markItemDone } from '../../lib/progress'
+import { saveRecording } from '../../lib/recordings'
 import TappableText, { type Selection } from '../../components/TappableText'
 import LookupSheet from '../../components/LookupSheet'
 import TopBar from '../../components/TopBar'
@@ -182,7 +183,7 @@ export default function ListeningScreen() {
     recRef.current = null
     if (!rec) return
     const blob = await rec.stop()
-    await db.recordings.add({ itemId: item.id, segmentId, blob, createdAt: new Date() })
+    await saveRecording(item.id, segmentId, blob)
     setShadow({ phase: 'done', url: URL.createObjectURL(blob), segmentId })
   }
   const shadowCancel = () => {

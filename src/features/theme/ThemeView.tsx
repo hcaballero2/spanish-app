@@ -17,6 +17,8 @@ const SKILL_LABEL: Record<Skill, string> = {
 export function itemRoute(item: Item): string {
   if (item.skill === 'reading') return `/read/${item.id}`
   if (item.skill === 'listening') return `/listen/${item.id}`
+  if (item.skill === 'speaking') return `/speak/${item.id}`
+  if (item.skill === 'writing') return `/write/${item.id}`
   return `/soon/${item.id}`
 }
 

@@ -19,6 +19,21 @@ export default function StatsScreen() {
   }, [])
   const themes = useLiveQuery(() => db.themes.toArray(), [])
   const tooHard = useLiveQuery(() => db.itemProgress.filter((p) => !!p.tooHard).count(), [])
+  const output = useLiveQuery(async () => {
+    const prog = await db.itemProgress.toArray()
+    const items = new Map((await db.items.toArray()).map((i) => [i.id, i]))
+    const rated = prog.filter((p) => items.get(p.itemId)?.skill === 'speaking' && p.selfRating)
+    const checked = prog.filter((p) => items.get(p.itemId)?.skill === 'writing' && p.checklistDone)
+    const listLen = (id: string) => items.get(id)?.checklist?.length ?? 0
+    const ticked = checked.reduce((a, p) => a + p.checklistDone!.length, 0)
+    const possible = checked.reduce((a, p) => a + listLen(p.itemId), 0)
+    return {
+      speaking: rated.length,
+      avgRating: rated.length ? rated.reduce((a, p) => a + p.selfRating!, 0) / rated.length : 0,
+      writing: checked.length,
+      checklistPct: possible ? Math.round((ticked / possible) * 100) : 0,
+    }
+  }, [])
   const [picked, setPicked] = useState(6)
 
   if (!settings || !week || !cards || !themes) return <main className="p-5 text-muted">Cargando…</main>
@@ -109,6 +124,23 @@ export default function StatsScreen() {
           <Tile label="Tarjetas" value={`${cards.total}`} unit="guardadas" />
           <Tile label="Aprendidas" value={`${cards.learned}`} unit="en repaso" note="ya pasaron la fase de aprendizaje" />
         </section>
+
+        {output && (output.speaking > 0 || output.writing > 0) && (
+          <section className="grid grid-cols-2 gap-3">
+            <Tile
+              label="Habla"
+              value={output.speaking ? output.avgRating.toFixed(1) : '–'}
+              unit="de 4"
+              note={`autoevaluación · ${output.speaking} ${output.speaking === 1 ? 'tarea' : 'tareas'}`}
+            />
+            <Tile
+              label="Escritura"
+              value={output.writing ? `${output.checklistPct}` : '–'}
+              unit="%"
+              note={`de la lista cumplida · ${output.writing} ${output.writing === 1 ? 'texto' : 'textos'}`}
+            />
+          </section>
+        )}
 
         <section className="rounded-2xl border border-line bg-card p-4">
           <h2 className="mb-1 font-semibold">Nivel</h2>

@@ -12,6 +12,8 @@ const profile = mkdtempSync(join(tmpdir(), 'smoke-'))
 
 const proc = spawn(chrome, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run',
+  // A fake microphone that is always allowed, for the speaking screens.
+  '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream',
   `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank',
 ], { stdio: 'ignore' })
 
@@ -382,6 +384,119 @@ try {
     if (await evaluate(`document.body.innerText.includes('la meta es')`)) throw new Error('mismatch notice still shown')
     await evaluate(`location.hash = '#/'`)
     await waitForText('/ 50 min')
+  })
+
+  const typeArea = (value) => `(() => {
+    const ta = document.querySelector('textarea')
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set
+    setter.call(ta, ${JSON.stringify(value)}); ta.dispatchEvent(new Event('input', { bubbles: true }))
+  })()`
+  const progressOf = (itemId) => idb(`return (await all('itemProgress')).find(p => p.itemId === ${JSON.stringify(itemId)}) ?? null`)
+  const recordingsOf = (itemId) => idb(`return (await all('recordings')).filter(r => r.itemId === ${JSON.stringify(itemId)}).map(r => [r.segmentId ?? '_', r.blob.size])`)
+  const waitFor = async (expr, label, timeoutMs = 8000) => {
+    const start = Date.now()
+    while (Date.now() - start < timeoutMs) {
+      const v = await evaluate(expr)
+      if (v) return v
+      await sleep(150)
+    }
+    throw new Error('timeout: ' + label)
+  }
+
+  await step('Writing: word count, autosaved draft, model + checklist, copy, done keeps text', async () => {
+    await evaluate(`location.hash = '#/theme/comida-callejera'`)
+    await waitForText('Escritura')
+    if (!(await evaluate(`!!document.querySelector('a[href="#/write/cc-writing-mensaje"]')`))) throw new Error('theme view has no /write/ link')
+    await evaluate(`location.hash = '#/write/cc-writing-mensaje'`)
+    await waitForText('0 / 50 palabras')
+    await evaluate(typeArea('Hola, Dani. Te recomiendo los tacos de pastor del puesto.'))
+    await waitForText('10 / 50 palabras')
+    await waitForText('Guardado')
+    const draft = await evaluate(progressOf('cc-writing-mensaje'))
+    if (!draft?.userText?.startsWith('Hola, Dani')) throw new Error('draft not autosaved: ' + JSON.stringify(draft))
+    await send('Page.navigate', { url: base + '#/write/cc-writing-mensaje' })
+    await waitForText('10 / 50 palabras')
+    const long = 'Hola, Dani. ' + 'Te recomiendo los tacos de pastor y las quesadillas del tianguis. '.repeat(5)
+    await evaluate(typeArea(long))
+    await waitForText('57 / 50 palabras ✓')
+    await evaluate(clickButton('Terminé'))
+    await waitForText('Texto modelo')
+    await waitForText('0 de 4')
+    await evaluate(`document.querySelector('input[type="checkbox"]').click()`)
+    await waitForText('1 de 4')
+    // Headless Chrome has no real clipboard; capture what the app writes.
+    await evaluate(`navigator.clipboard.writeText = async (t) => { window.__clip = t }`)
+    await evaluate(clickButton('📋 Copiar para corregir'))
+    await waitForText('Copiado')
+    const clip = await evaluate(`window.__clip ?? ''`)
+    if (!clip.startsWith('Corrige este texto en español mexicano, nivel A2') || !clip.includes('quesadillas')) throw new Error('clipboard: ' + clip)
+    await evaluate(clickButton('Marcar como terminado'))
+    await waitForText('Escritura')
+    const done = await evaluate(progressOf('cc-writing-mensaje'))
+    if (done?.status !== 'done' || !done.userText?.includes('quesadillas') || JSON.stringify(done.checklistDone) !== '[0]')
+      throw new Error('done should keep draft and ticks: ' + JSON.stringify(done))
+  })
+
+  await step('Speaking monologue: record, playback, model answer, self-rating, re-record replaces', async () => {
+    await evaluate(`location.hash = '#/speak/cc-speaking-monologo'`)
+    await waitForText('Monólogo')
+    if (await evaluate(`document.body.innerText.includes('Respuesta modelo')`)) throw new Error('model answer shown before recording')
+    await evaluate(clickButton('🎤 Empezar a hablar'))
+    await waitForText('Grabando')
+    await waitForText('Meta: 60 s')
+    await sleep(1200)
+    await evaluate(clickButton('● Grabando'))
+    await waitForText('Tu grabación')
+    await waitForText('Respuesta modelo')
+    await waitForText('¿Cómo te fue?')
+    if (!(await evaluate(`!!document.querySelector('audio[src^="blob:"]')`))) throw new Error('no playback')
+    await evaluate(clickButton('Bien'))
+    await waitFor(`document.querySelector('button[aria-pressed="true"]')?.textContent === 'Bien'`, 'rating pressed')
+    if ((await evaluate(progressOf('cc-speaking-monologo')))?.selfRating !== 3) throw new Error('selfRating not saved')
+    await evaluate(clickButton('🎤 Grabar otra vez'))
+    await waitForText('Grabando')
+    await sleep(600)
+    await evaluate(clickButton('● Grabando'))
+    await waitForText('Tu grabación')
+    await sleep(300)
+    const recs = await evaluate(recordingsOf('cc-speaking-monologo'))
+    if (recs.length !== 1 || recs[0][1] === 0) throw new Error('expected one non-empty recording: ' + JSON.stringify(recs))
+  })
+
+  await step('Speaking dialogue: partner lines, one reply per turn, per-turn model answers', async () => {
+    await evaluate(`location.hash = '#/speak/cc-speaking-dialogo'`)
+    await evaluate(clickButton('▶ Empezar diálogo'))
+    await waitForText('¿Qué le damos?')
+    for (let i = 0; i < 5; i++) {
+      await waitFor(`[...document.querySelectorAll('button')].some(b => b.textContent.startsWith('🎤 Responder'))`, 'responder ' + i)
+      await evaluate(clickButton('🎤 Responder'))
+      await waitForText('Grabando')
+      await sleep(400)
+      await evaluate(clickButton('● Grabando'))
+      await waitFor(`document.querySelectorAll('audio').length === ${i + 1}`, 'reply audio ' + i)
+    }
+    await waitForText('Repetir el diálogo')
+    await waitForText('Respuesta modelo')
+    await waitForText('Me da cuatro tacos de pastor')
+    const turns = (await evaluate(recordingsOf('cc-speaking-dialogo'))).map((r) => r[0]).sort()
+    if (JSON.stringify(turns) !== '["turn-0","turn-1","turn-2","turn-3","turn-4"]') throw new Error('turn recordings: ' + JSON.stringify(turns))
+  })
+
+  await step('Speaking: add-word field saves a card with an example; shadow mode lists sentences', async () => {
+    await evaluate(typeInto('input[aria-label="Palabra en español"]', 'efectivo'))
+    await evaluate(typeInto('input[aria-label="Significado"]', 'cash'))
+    await evaluate(clickButton('Guardar tarjeta'))
+    await waitForText('«efectivo» guardada')
+    const card = await evaluate(idb(`return (await all('cards')).find(c => c.word === 'efectivo') ?? null`))
+    if (!card || card.meaning !== 'cash' || !card.exampleEs.includes('efectivo')) throw new Error('card: ' + JSON.stringify(card))
+    await evaluate(`location.hash = '#/speak/cc-speaking-sombra'`)
+    await waitForText('Sombra')
+    const n = await evaluate(`[...document.querySelectorAll('button')].filter(b => b.textContent.includes('Escuchar y repetir')).length`)
+    if (n !== 6) throw new Error('shadow sentences: ' + n)
+    await evaluate(`location.hash = '#/stats'`)
+    await waitForText('Habla')
+    await waitForText('3.0')
+    await waitForText('25')
   })
 
   await step('Dark mode: setting switches tokens, theme-color and localStorage', async () => {
