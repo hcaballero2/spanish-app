@@ -2,6 +2,8 @@
 // Chrome records webm/opus. The blob is stored as-is in Dexie and played back
 // through an <audio> element, so the container does not matter to the app.
 
+const STOP_TIMEOUT_MS = 2500
+
 export interface ActiveRecording {
   stop: () => Promise<Blob>
   mimeType: string
@@ -27,17 +29,34 @@ export async function startRecording(): Promise<ActiveRecording> {
   rec.ondataavailable = (e) => {
     if (e.data.size > 0) chunks.push(e.data)
   }
+  const release = () => {
+    for (const t of stream.getTracks()) t.stop()
+  }
+  let finish: () => void = () => {}
   const stopped = new Promise<Blob>((resolve) => {
-    rec.onstop = () => {
-      for (const t of stream.getTracks()) t.stop()
+    let done = false
+    finish = () => {
+      if (done) return
+      done = true
+      release()
       resolve(new Blob(chunks, { type: rec.mimeType || mimeType || 'audio/webm' }))
     }
+    rec.onstop = finish
+    rec.onerror = finish
   })
   rec.start()
   return {
     mimeType: rec.mimeType || mimeType,
     stop: () => {
-      if (rec.state !== 'inactive') rec.stop()
+      if (rec.state !== 'inactive') {
+        try {
+          rec.stop()
+        } catch {
+          finish()
+        }
+      } else finish()
+      // iOS sometimes never fires `stop`; don't leave the mic on or the caller waiting.
+      window.setTimeout(finish, STOP_TIMEOUT_MS)
       return stopped
     },
   }

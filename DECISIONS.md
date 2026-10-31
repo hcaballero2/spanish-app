@@ -188,3 +188,4 @@ this file records what was picked where the plan left room.
 - "Copiar para corregir" copies: «Corrige este texto en español mexicano, nivel {item level}, explica cada cambio.» + the task + the text. PLAN's example says B1; the item's level is used instead.
 - `markItemDone` now merges into the progress row instead of replacing it, so drafts, ticks and ratings survive.
 - Smoke uses Chrome's fake microphone flags and stubs `navigator.clipboard.writeText` (headless Chrome has no real clipboard).
+- Fix (Hazel, iPhone: dialogue recording would not stop): the recorder now gives up waiting for MediaRecorder's `stop` event after 2.5 s, always releases the mic, and shows «No se grabó sonido» / a save error instead of failing silently. Starting a recording cancels any TTS still speaking. Smoke simulates a recorder whose `stop` never fires.

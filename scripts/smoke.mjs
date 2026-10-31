@@ -400,7 +400,7 @@ try {
       if (v) return v
       await sleep(150)
     }
-    throw new Error('timeout: ' + label)
+    throw new Error('timeout: ' + label + '\n' + (await evaluate('document.body.innerText')).slice(0, 600))
   }
 
   await step('Writing: word count, autosaved draft, model + checklist, copy, done keeps text', async () => {
@@ -461,6 +461,27 @@ try {
     await sleep(300)
     const recs = await evaluate(recordingsOf('cc-speaking-monologo'))
     if (recs.length !== 1 || recs[0][1] === 0) throw new Error('expected one non-empty recording: ' + JSON.stringify(recs))
+  })
+
+  await step('Recording that never fires "stop" (seen on iOS) still ends, frees the mic and says so', async () => {
+    await send('Page.navigate', { url: base + '#/speak/cc-speaking-monologo' })
+    await waitForText('Monólogo')
+    await evaluate(`(() => {
+      window.__stop = MediaRecorder.prototype.stop
+      MediaRecorder.prototype.stop = function () {}
+      window.__gum = navigator.mediaDevices.getUserMedia
+      const gum = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices)
+      navigator.mediaDevices.getUserMedia = async (c) => (window.__stream = await gum(c))
+    })()`)
+    await evaluate(clickButton('🎤 Grabar otra vez'))
+    await waitForText('Grabando')
+    await sleep(500)
+    await evaluate(clickButton('● Grabando'))
+    await waitFor(`!document.body.innerText.includes('Grabando')`, 'button left recording state', 1000)
+    await waitForText('No se grabó sonido', 5000)
+    if (!(await evaluate(`window.__stream.getTracks().every(t => t.readyState === 'ended')`))) throw new Error('mic still on')
+    // A hash-only Page.navigate does not reload, so undo the patches by hand.
+    await evaluate(`MediaRecorder.prototype.stop = window.__stop; navigator.mediaDevices.getUserMedia = window.__gum`)
   })
 
   await step('Speaking dialogue: partner lines, one reply per turn, per-turn model answers', async () => {

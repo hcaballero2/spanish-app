@@ -49,11 +49,21 @@ export function useRecorder(opts: {
     noteActivity()
     if (!r) return
     const blob = await r.stop()
-    await latest.current.onBlob(blob, latest.current.transcript)
+    if (blob.size === 0) {
+      setError('No se grabó sonido. Intenta otra vez.')
+      return
+    }
+    try {
+      await latest.current.onBlob(blob, latest.current.transcript)
+    } catch (e) {
+      setError(`No se pudo guardar la grabación (${e instanceof Error ? e.message : String(e)})`)
+    }
   }
 
   const start = async (): Promise<boolean> => {
     if (rec.current) return true
+    // Never record over the app's own voice.
+    window.speechSynthesis?.cancel()
     setError(null)
     setTranscript('')
     latest.current.transcript = ''
