@@ -34,8 +34,8 @@ export function dayKey(d: Date): string {
 
 /**
  * Runs the session timer while the calling screen is mounted. Returns the
- * seconds studied on this screen since it opened and whether the timer is
- * paused (idle or hidden).
+ * time studied so far, continuing across visits: all-time for an item, today
+ * for review (no item). Also whether the timer is paused (idle or hidden).
  */
 export function useSessionTimer(skill: SplitKey, itemId?: string): { seconds: number; paused: boolean } {
   const [seconds, setSeconds] = useState(0)
@@ -44,7 +44,8 @@ export function useSessionTimer(skill: SplitKey, itemId?: string): { seconds: nu
   useEffect(() => {
     let segStart: number | null = null
     let rowId: Promise<number> | null = null
-    let banked = 0 // seconds from segments already closed on this screen
+    let banked = 0 // seconds from earlier visits plus segments already closed on this screen
+    const mountedAt = new Date()
     let lastActivity = Date.now()
     let ticks = 0
 
@@ -100,6 +101,21 @@ export function useSessionTimer(skill: SplitKey, itemId?: string): { seconds: nu
       if (++ticks % FLUSH_EVERY_S === 0 && rowId) write(rowId, segSeconds(now))
     }
 
+    // Earlier visits: rows that started before this screen opened.
+    const earlier = itemId
+      ? db.sessions.where('itemId').equals(itemId)
+      : db.sessions.where('startedAt').aboveOrEqual(startOfDay()).filter((r) => r.skill === skill)
+    let alive = true
+    earlier
+      .filter((r) => r.startedAt < mountedAt)
+      .toArray()
+      .then((rows) => {
+        if (!alive) return
+        banked += rows.reduce((a, r) => a + r.seconds, 0)
+        setSeconds(banked + segSeconds(Date.now()))
+      })
+      .catch(() => {})
+
     if (document.visibilityState === 'visible') start(Date.now())
     else setPaused(true)
     const interval = window.setInterval(tick, 1000)
@@ -109,6 +125,7 @@ export function useSessionTimer(skill: SplitKey, itemId?: string): { seconds: nu
     window.addEventListener('pagehide', onPageHide)
 
     return () => {
+      alive = false
       window.clearInterval(interval)
       for (const e of ACTIVITY_EVENTS) window.removeEventListener(e, onActivity, { capture: true })
       window.removeEventListener(ACTIVITY, onActivity)

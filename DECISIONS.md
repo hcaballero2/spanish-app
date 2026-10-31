@@ -163,3 +163,6 @@ this file records what was picked where the plan left room.
 - **Stats chart:** one series (minutes per day), single accent hue, dashed
   goal line, tap a bar to read its value (no per-bar labels). Bars turn
   green (`ok`) on days the goal was met.
+- **Top-bar timer continues across visits** (Hazel, 2026-10-30: it reset on
+  every entry). It shows the all-time total for the item, or today's review
+  total on the review screen, read from earlier `sessions` rows on mount.

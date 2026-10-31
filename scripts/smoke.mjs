@@ -314,9 +314,23 @@ try {
     await evaluate(`location.hash = '#/read/cc-reading-tacos'`)
     await waitForText('taquero')
     if (!(await evaluate(`!!document.querySelector('[role="timer"]')`))) throw new Error('no timer on reading screen')
-    await sleep(3300)
-    const shown = await evaluate(`document.querySelector('[role="timer"]').textContent`)
-    if (!/^0:0[3-9]$/.test(shown)) throw new Error('timer shows ' + shown)
+    const clock = async () => {
+      const [m, s] = (await evaluate(`document.querySelector('[role="timer"]').textContent`)).replace('⏸ ', '').split(':').map(Number)
+      return m * 60 + s
+    }
+    await sleep(600)
+    const before = await clock()
+    await sleep(3000)
+    const shown = await clock()
+    if (shown - before < 2 || shown - before > 4) throw new Error(`timer went ${before} → ${shown}`)
+    // Leaving and coming back continues from the stored total.
+    await evaluate(`location.hash = '#/theme/comida-callejera'`)
+    await sleep(500)
+    await evaluate(`location.hash = '#/read/cc-reading-tacos'`)
+    await waitForText('taquero')
+    await sleep(600)
+    const again = await clock()
+    if (again < shown) throw new Error(`timer reset on re-entry: ${shown} → ${again}`)
     await evaluate(`location.hash = '#/'`)
     await waitForText('Meta diaria')
     await sleep(300)
