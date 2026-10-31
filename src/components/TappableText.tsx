@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Card, Segment } from '../db/types'
+import { groupParagraphs, isDialogue } from '../lib/paragraphs'
 import { tokenize, wordKey } from '../lib/words'
 
 export interface Selection {
@@ -12,8 +13,12 @@ interface Props {
   segments: Segment[]
   known: Map<string, Card>
   onSelect: (sel: Selection) => void
-  /** Segment currently being spoken (listening screen), highlighted. */
+  /** Segment currently being spoken (listening screen), highlighted and scrolled into view. */
   activeSegmentId?: string
+  /** Show every paragraph's English under it (the per-paragraph chips still work when false). */
+  showAllGloss?: boolean
+  /** Tap on a sentence's whitespace/punctuation (listening: jump to that sentence). */
+  onSentenceTap?: (segment: Segment) => void
 }
 
 interface Drag {
@@ -27,10 +32,11 @@ const LONG_PRESS_MS = 350
 const MOVE_TOLERANCE = 8
 
 /**
- * Sentence-level text where each word is tappable (PLAN §7.1).
- * Tap = one word. Long-press then drag = phrase. ⓘ reveals the English gloss.
+ * Flowing paragraphs where each word is tappable (PLAN §7.1, layout revised in
+ * phase 3). Tap = one word. Long-press then drag = phrase. A small chip at the
+ * end of each paragraph reveals its English.
  */
-export default function TappableText({ segments, known, onSelect, activeSegmentId }: Props) {
+export default function TappableText({ segments, known, onSelect, activeSegmentId, showAllGloss = false, onSentenceTap }: Props) {
   const [open, setOpen] = useState<Set<string>>(new Set())
   const [drag, setDrag] = useState<Drag | null>(null)
   const dragRef = useRef<Drag | null>(null)
@@ -48,6 +54,12 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
     el.addEventListener('touchmove', onTouchMove, { passive: false })
     return () => el.removeEventListener('touchmove', onTouchMove)
   }, [])
+
+  useEffect(() => {
+    if (!activeSegmentId || !container.current) return
+    const el = container.current.querySelector<HTMLElement>(`[data-sent="${CSS.escape(activeSegmentId)}"]`)
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  }, [activeSegmentId])
 
   const setDragBoth = (d: Drag | null) => {
     dragRef.current = d
@@ -133,63 +145,109 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
     })
   }
 
+  const paragraphs = groupParagraphs(segments)
+
+  const renderSentence = (seg: Segment, si: number, trailing?: ReactNode) => {
+    const tokens = tokenize(seg.es)
+    const isActive = activeSegmentId === seg.id
+    const [dA, dB] =
+      drag && drag.segId === seg.id ? (drag.start <= drag.end ? [drag.start, drag.end] : [drag.end, drag.start]) : [-1, -1]
+    const renderToken = (t: (typeof tokens)[number], i: number) => {
+      if (!t.key) return <span key={i}>{t.text}</span>
+      const card = known.get(t.key)
+      const inDrag = drag?.active && drag.segId === seg.id && i >= dA && i <= dB
+      return (
+        <span
+          key={i}
+          data-seg={seg.id}
+          data-i={i}
+          onPointerDown={(e) => onPointerDown(e, seg.id, i)}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerCancel}
+          onContextMenu={(e) => e.preventDefault()}
+          onClick={(e) => e.stopPropagation()}
+          className={[
+            'cursor-pointer rounded-sm',
+            card ? 'underline decoration-accent/60 decoration-dotted underline-offset-4' : '',
+            inDrag ? 'bg-accent/25' : 'active:bg-accent-soft',
+          ].join(' ')}
+        >
+          {t.text}
+        </span>
+      )
+    }
+    // Keep a trailing chip on the same line as the last word, so it never wraps alone.
+    let lastWord = tokens.length
+    if (trailing) for (let i = tokens.length - 1; i >= 0; i--) if (tokens[i]!.key) { lastWord = i; break }
+    return (
+      <span key={seg.id}>
+        {si > 0 && ' '}
+        <span
+          data-sent={seg.id}
+          onClick={onSentenceTap ? () => onSentenceTap(seg) : undefined}
+          className={`rounded-sm box-decoration-clone transition-colors ${isActive ? 'bg-accent-soft' : ''}`}
+        >
+          {tokens.slice(0, lastWord).map((t, i) => renderToken(t, i))}
+          {trailing ? (
+            <span className="whitespace-nowrap">
+              {tokens.slice(lastWord).map((t, i) => renderToken(t, lastWord + i))}
+              {trailing}
+            </span>
+          ) : null}
+        </span>
+      </span>
+    )
+  }
+
   return (
     <div
       ref={container}
-      className="space-y-3 text-[19px] leading-[1.7]"
+      className="text-[18px] leading-[1.75]"
       style={{ WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none' }}
     >
-      {segments.map((seg) => {
-        const tokens = tokenize(seg.es)
-        const isActive = activeSegmentId === seg.id
-        const [dA, dB] =
-          drag && drag.segId === seg.id
-            ? drag.start <= drag.end
-              ? [drag.start, drag.end]
-              : [drag.end, drag.start]
-            : [-1, -1]
+      {paragraphs.map((para, pi) => {
+        const pid = para[0]?.id ?? String(pi)
+        const dialogue = para[0] ? isDialogue(para[0]) : false
+        const glossOpen = showAllGloss || open.has(pid)
+        const hasGloss = para.some((seg) => seg.en)
         return (
-          <p key={seg.id} className={`rounded-lg px-1 transition-colors ${isActive ? 'bg-accent-soft' : ''}`}>
-            {tokens.map((t, i) => {
-              if (!t.key) return <span key={i}>{t.text}</span>
-              const card = known.get(t.key)
-              const inDrag = drag?.active && drag.segId === seg.id && i >= dA && i <= dB
-              return (
-                <span
-                  key={i}
-                  data-seg={seg.id}
-                  data-i={i}
-                  onPointerDown={(e) => onPointerDown(e, seg.id, i)}
-                  onPointerMove={onPointerMove}
-                  onPointerUp={onPointerUp}
-                  onPointerCancel={onPointerCancel}
-                  onContextMenu={(e) => e.preventDefault()}
-                  className={[
-                    'cursor-pointer rounded-sm px-[1px]',
-                    card ? 'underline decoration-accent/50 decoration-dotted underline-offset-4' : '',
-                    inDrag ? 'bg-accent/25' : 'active:bg-accent-soft',
-                  ].join(' ')}
-                >
-                  {t.text}
-                </span>
-              )
-            })}
-            {seg.en && (
-              <button
-                type="button"
-                onClick={() => toggleGloss(seg.id)}
-                aria-label="Ver traducción"
-                className={`ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] align-middle ${
-                  open.has(seg.id) ? 'bg-accent text-on-accent' : 'bg-line text-muted'
-                }`}
-              >
-                i
-              </button>
+          <div key={pid} data-para={pid} className="mb-4">
+            {(dialogue ? para.map((seg) => [seg]) : [para]).map((line, li, lines) => (
+              <p key={line[0]!.id} className={dialogue ? 'pl-3 -indent-3' : ''}>
+                {line.map((seg, si) =>
+                  renderSentence(
+                    seg,
+                    si,
+                    si === line.length - 1 && li === lines.length - 1 && hasGloss && !showAllGloss ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleGloss(pid)
+                        }}
+                        aria-label="Ver traducción"
+                        className={`ml-2 inline-flex h-5 items-center rounded-full px-1.5 align-middle indent-0 text-[10px] font-semibold uppercase tracking-wide ${
+                          open.has(pid) ? 'bg-accent text-on-accent' : 'bg-line text-muted'
+                        }`}
+                      >
+                        en
+                      </button>
+                    ) : undefined,
+                  ),
+                )}
+              </p>
+            ))}
+            {hasGloss && glossOpen && (
+              <div className="mt-1 text-[15px] leading-snug text-muted">
+                {dialogue ? (
+                  para.map((seg) => seg.en && <p key={seg.id} className="pl-3">{seg.en}</p>)
+                ) : (
+                  <p>{para.map((seg) => seg.en).filter(Boolean).join(' ')}</p>
+                )}
+              </div>
             )}
-            {seg.en && open.has(seg.id) && (
-              <span className="mt-1 block text-[15px] leading-snug text-muted">{seg.en}</span>
-            )}
-          </p>
+          </div>
         )
       })}
     </div>

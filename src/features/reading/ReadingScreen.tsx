@@ -7,7 +7,10 @@ import TappableText, { type Selection } from '../../components/TappableText'
 import LookupSheet from '../../components/LookupSheet'
 import TopBar from '../../components/TopBar'
 import LevelBadge from '../../components/LevelBadge'
-import { completeTheme } from '../../content/seed'
+import Comprehension from '../../components/Comprehension'
+import DoneButton from '../../components/DoneButton'
+import GlossToggle from '../../components/GlossToggle'
+import { markItemDone } from '../../lib/progress'
 
 export default function ReadingScreen() {
   const { itemId = '' } = useParams()
@@ -17,7 +20,7 @@ export default function ReadingScreen() {
   const cards = useLiveQuery(() => db.cards.toArray(), [])
   const [sel, setSel] = useState<Selection | null>(null)
   const [toast, setToast] = useState<string | null>(null)
-  const [answers, setAnswers] = useState<Record<number, number>>({})
+  const [showGloss, setShowGloss] = useState(false)
 
   if (!item || !cards) return <main className="p-5 text-muted">Cargando…</main>
   if (!item.segments) return <main className="p-5">Este elemento no tiene texto.</main>
@@ -33,66 +36,36 @@ export default function ReadingScreen() {
   }
 
   const markDone = async () => {
-    await db.itemProgress.put({ itemId: item.id, status: 'done', completedAt: new Date() })
-    const siblings = await db.items.where('themeId').equals(item.themeId).toArray()
-    const prog = await db.itemProgress.bulkGet(siblings.map((s) => s.id))
-    const allDone = siblings.every((s, i) => prog[i]?.status === 'done' || s.id === item.id)
-    if (allDone) await completeTheme(item.themeId)
+    await markItemDone(item.id, item.themeId)
     navigate(`/theme/${item.themeId}`)
   }
 
   return (
     <>
-      <TopBar title={item.title} back={`/theme/${item.themeId}`} right={<LevelBadge level={item.level} stretch={item.stretch} />} />
+      <TopBar
+        title={item.title}
+        back={`/theme/${item.themeId}`}
+        right={
+          <>
+            <GlossToggle on={showGloss} onToggle={() => setShowGloss((v) => !v)} />
+            <LevelBadge level={item.level} stretch={item.stretch} />
+          </>
+        }
+      />
       <main className="mx-auto max-w-md p-5 pb-32">
-        <p className="mb-4 text-xs text-muted">
+        <p className="mb-5 text-xs text-muted">
           Toca una palabra para guardarla · mantén presionado y arrastra para una frase · {item.estimatedMinutes} min
         </p>
 
-        <TappableText segments={item.segments} known={known} onSelect={setSel} />
+        <TappableText segments={item.segments} known={known} onSelect={setSel} showAllGloss={showGloss} />
 
-        {item.questions && item.questions.length > 0 && (
-          <section className="mt-8 space-y-4">
-            <h2 className="font-semibold">Comprensión</h2>
-            {item.questions.map((q, qi) => {
-              const picked = answers[qi]
-              return (
-                <div key={qi} className="rounded-2xl border border-line bg-card p-4">
-                  <p className="mb-2 font-medium">{q.q}</p>
-                  <div className="space-y-1">
-                    {q.options.map((opt, oi) => {
-                      const state =
-                        picked === undefined ? '' : oi === q.answer ? 'border-ok bg-ok-soft' : oi === picked ? 'border-accent bg-accent-soft' : 'opacity-60'
-                      return (
-                        <button
-                          key={oi}
-                          type="button"
-                          disabled={picked !== undefined}
-                          onClick={() => setAnswers((a) => ({ ...a, [qi]: oi }))}
-                          className={`block w-full rounded-lg border border-line px-3 py-2 text-left text-sm ${state}`}
-                        >
-                          {opt}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })}
-          </section>
-        )}
+        {item.questions && <Comprehension questions={item.questions} />}
 
         <section className="mt-8 flex items-center justify-between text-sm text-muted">
           <span>{savedHere} tarjeta{savedHere === 1 ? '' : 's'} de este texto</span>
         </section>
 
-        <button
-          type="button"
-          onClick={markDone}
-          className={`mt-4 w-full rounded-xl px-4 py-3 font-medium ${done ? 'border border-line text-muted' : 'bg-accent text-on-accent'}`}
-        >
-          {done ? 'Terminado ✓' : 'Marcar como terminado'}
-        </button>
+        <DoneButton done={done} onClick={() => void markDone()} />
       </main>
 
       {sel && (

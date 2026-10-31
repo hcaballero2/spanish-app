@@ -7,6 +7,8 @@ const SegmentSchema = z.strictObject({
   id: z.string().min(1),
   es: z.string().min(1),
   en: z.string().min(1).optional(),
+  /** Starts a new paragraph. Dialogue lines (leading em dash) break automatically. */
+  break: z.boolean().optional(),
 })
 
 const QuestionSchema = z.strictObject({
@@ -91,6 +93,12 @@ export const ThemePackSchema = z
     cultureNote: z.string().min(1),
     canDo: z.array(z.string().min(1)).min(3).max(10),
     sources: z.array(SourceSchema).min(1),
+    /**
+     * Word → English meaning(s) as used in this pack, alternatives separated by " / ".
+     * Keys are lowercase surface forms (lib/words.ts wordKey). Used to check the
+     * learner's guessed meaning and to build multiple-choice review options.
+     */
+    glossary: z.record(z.string().regex(/^[\p{Ll}\p{N}'’-]+$/u, 'lowercase single word'), z.string().min(1)).optional(),
     items: z.array(ItemSchema).min(1),
   })
   .superRefine((pack, ctx) => {

@@ -58,6 +58,21 @@ async function waitForText(text, timeoutMs = 10000) {
 }
 
 const failures = []
+// Helpers that run in the page.
+const tapWord = (word) => `(() => {
+  const el = [...document.querySelectorAll('[data-seg][data-i]')].find(e => e.textContent === ${JSON.stringify(word)})
+  const opts = { bubbles: true, pointerType: 'touch', clientX: 10, clientY: 10, button: 0 }
+  el.dispatchEvent(new PointerEvent('pointerdown', opts)); el.dispatchEvent(new PointerEvent('pointerup', opts))
+})()`
+const typeInto = (selector, value) => `(() => {
+  const input = document.querySelector(${JSON.stringify(selector)})
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+  setter.call(input, ${JSON.stringify(value)}); input.dispatchEvent(new Event('input', { bubbles: true }))
+})()`
+const clickButton = (text) => `(() => {
+  const b = [...document.querySelectorAll('button')].find(b => b.textContent.trim().startsWith(${JSON.stringify(text)}))
+  if (!b) throw new Error('no button ' + ${JSON.stringify(text)}); b.click()
+})()`
 async function step(name, fn) {
   try {
     await fn()
@@ -108,21 +123,31 @@ try {
     if (n < 100) throw new Error(`only ${n} word spans`)
   })
 
-  await step('Tap a word → sheet → save card', async () => {
-    await evaluate(`(() => {
-      const el = [...document.querySelectorAll('[data-seg][data-i]')].find(e => e.textContent === 'taquero')
-      const opts = { bubbles: true, pointerType: 'touch', clientX: 10, clientY: 10, button: 0 }
-      el.dispatchEvent(new PointerEvent('pointerdown', opts))
-      el.dispatchEvent(new PointerEvent('pointerup', opts))
-    })()`)
-    await waitForText('Significado')
-    await evaluate(`(() => {
-      const input = document.querySelector('input[placeholder]')
-      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
-      setter.call(input, 'taco seller')
-      input.dispatchEvent(new Event('input', { bubbles: true }))
-      document.querySelector('form button[type=submit]').click()
-    })()`)
+  await step('Reading is laid out as paragraphs', async () => {
+    const paras = await evaluate(`document.querySelectorAll('[data-para]').length`)
+    if (paras < 3) throw new Error(`only ${paras} paragraphs`)
+    const sents = await evaluate(`document.querySelectorAll('[data-sent]').length`)
+    if (sents <= paras) throw new Error(`sentences (${sents}) not grouped into paragraphs (${paras})`)
+  })
+
+  await step('Wrong guess → check shows the glossary meaning', async () => {
+    await evaluate(tapWord('esquina'))
+    await waitForText('¿Qué crees que significa?')
+    await evaluate(typeInto('input[placeholder]', 'street'))
+    await evaluate(clickButton('Comprobar'))
+    const body = await waitForText('No exactamente')
+    if (!body.includes('corner')) throw new Error('glossary meaning not shown')
+    await waitForText('Guardar «corner»')
+    await evaluate(clickButton('Cancelar'))
+  })
+
+  await step('Tap a word → guess → check → save card', async () => {
+    await evaluate(tapWord('taquero'))
+    await waitForText('¿Qué crees que significa?')
+    await evaluate(typeInto('input[placeholder]', 'taco seller'))
+    await evaluate(clickButton('Comprobar'))
+    await waitForText('¡Bien!')
+    await evaluate(clickButton('Guardar tarjeta'))
     await waitForText('1 tarjeta de este texto')
     const stored = await evaluate(`(async () => {
       const req = indexedDB.open('spanish-app')
@@ -165,16 +190,17 @@ try {
     await waitForText('Repasar 1')
   })
 
-  await step('Review: front blanks the word, reveal shows meaning, rate Good', async () => {
+  await step('Review (multiple choice): pick the meaning, app grades it Good', async () => {
     await evaluate(`location.hash = '#/review'`)
-    const body = await waitForText('Mostrar respuesta')
+    const body = await waitForText('elige')
     if (!body.includes('taquero')) throw new Error('front missing word')
     if (!body.includes('____')) throw new Error('example not blanked')
-    if (body.includes('taco seller')) throw new Error('meaning leaked before reveal')
-    await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.includes('Mostrar respuesta')).click()`)
-    const back = await waitForText('taco seller')
-    for (const t of ['Otra vez', 'Difícil', 'Bien', 'Fácil']) if (!back.includes(t.toLowerCase())) throw new Error(`missing ${t}`)
-    await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.startsWith('Bien')).click()`)
+    const opts = await evaluate(`[...document.querySelectorAll('[aria-label="Opciones"] button')].map(b => b.textContent)`)
+    if (opts.length !== 4 || !opts.includes('taco seller')) throw new Error('options: ' + JSON.stringify(opts))
+    if (body.includes('correcto')) throw new Error('graded before answering')
+    await evaluate(clickButton('taco seller'))
+    await waitForText('¡Correcto!')
+    await evaluate(clickButton('Siguiente'))
     await waitForText('¡Listo!')
     await waitForText('1 tarjeta repasada')
     const stored = await evaluate(`(async () => {
@@ -214,6 +240,67 @@ try {
     await evaluate(`[...document.querySelectorAll('li button')].find(b => b.textContent.includes('taquero')).click()`)
     await waitForText('Guardar cambios')
     await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent === 'Cancelar').click()`)
+  })
+
+  await step('Review (typed): after 2 correct answers, typed recall with a fallback', async () => {
+    // Simulate a second correct answer and make the card due again.
+    await evaluate(`(async () => {
+      const req = indexedDB.open('spanish-app')
+      const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error) })
+      const tx = db.transaction(['cards', 'reviews'], 'readwrite')
+      const cards = tx.objectStore('cards'); const reviews = tx.objectStore('reviews')
+      const all = await new Promise((res) => { const r = cards.getAll(); r.onsuccess = () => res(r.result) })
+      const c = all[0]; c.fsrs.due = new Date(Date.now() - 1000); cards.put(c)
+      reviews.add({ cardId: c.id, rating: 3, reviewedAt: new Date(Date.now() - 60000), wasNew: false })
+      await new Promise((res) => (tx.oncomplete = res))
+    })()`)
+    await evaluate(`location.hash = '#/'`)
+    await waitForText('Repasar 1')
+    await evaluate(`location.hash = '#/review'`)
+    await waitForText('escribe')
+    if (await evaluate(`!!document.querySelector('[aria-label="Opciones"]')`)) throw new Error('still multiple choice')
+    await evaluate(typeInto('input[aria-label="Tu respuesta"]', 'taco vendor'))
+    await evaluate(clickButton('Comprobar'))
+    await waitForText('No exactamente')
+    await waitForText('Mi respuesta también vale')
+    await evaluate(clickButton('Mi respuesta también vale'))
+    await waitForText('¡Listo!')
+    const ratings = await evaluate(`(async () => {
+      const req = indexedDB.open('spanish-app')
+      const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error) })
+      return new Promise((res) => { const r = db.transaction('reviews').objectStore('reviews').getAll(); r.onsuccess = () => res(r.result.map(x => x.rating)) })
+    })()`)
+    if (JSON.stringify(ratings) !== '[3,3,3]') throw new Error('override should rate Good: ' + JSON.stringify(ratings))
+  })
+
+  await step('Listening screen: captions, sentence stepping, hide text, word tap', async () => {
+    await evaluate(`location.hash = '#/theme/comida-callejera'`)
+    await waitForText('Escucha')
+    const href = await evaluate(`[...document.querySelectorAll('a')].map(a => a.getAttribute('href')).find(h => h && h.includes('/listen/'))`)
+    if (!href) throw new Error('theme view has no /listen/ link')
+    await evaluate(`location.hash = '#/listen/cc-listening-elotes'`)
+    await waitForText('Buenas tardes')
+    await waitForText('Frase 1 de 17')
+    const active1 = await evaluate(`document.querySelector('[data-sent].bg-accent-soft')?.dataset.sent`)
+    if (active1 !== 'l1-01') throw new Error('active sentence: ' + active1)
+    await evaluate(`document.querySelector('button[aria-label="Frase siguiente"]').click()`)
+    await waitForText('Frase 2 de 17')
+    const active2 = await evaluate(`document.querySelector('[data-sent].bg-accent-soft')?.dataset.sent`)
+    if (active2 !== 'l1-02') throw new Error('active sentence after next: ' + active2)
+    await evaluate(`document.querySelector('button[aria-label="Frase anterior"]').click()`)
+    await waitForText('Frase 1 de 17')
+    await evaluate(clickButton('Ocultar texto'))
+    await waitForText('Escucha primero')
+    if (await evaluate(`document.querySelectorAll('[data-sent]').length`) !== 0) throw new Error('captions still visible')
+    await evaluate(clickButton('Ver texto'))
+    await waitForText('Buenas tardes')
+    await evaluate(tapWord('elote'))
+    await waitForText('¿Qué crees que significa?')
+    await evaluate(clickButton('Cancelar'))
+    for (const label of ['Reproducir', 'Velocidad']) {
+      if (!(await evaluate(`!!document.querySelector('button[aria-label="${label}"]')`))) throw new Error('missing ' + label)
+    }
+    await waitForText('Escuchar y repetir')
   })
 
   await step('Dark mode: setting switches tokens, theme-color and localStorage', async () => {

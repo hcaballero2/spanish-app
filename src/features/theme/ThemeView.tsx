@@ -15,7 +15,9 @@ const SKILL_LABEL: Record<Skill, string> = {
 }
 
 export function itemRoute(item: Item): string {
-  return item.skill === 'reading' ? `/read/${item.id}` : `/soon/${item.id}`
+  if (item.skill === 'reading') return `/read/${item.id}`
+  if (item.skill === 'listening') return `/listen/${item.id}`
+  return `/soon/${item.id}`
 }
 
 export default function ThemeView() {

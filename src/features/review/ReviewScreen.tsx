@@ -1,50 +1,92 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db/db'
 import type { Card } from '../../db/types'
 import TopBar from '../../components/TopBar'
-import { GRADES, GRADE_LABEL, blankOut, buildQueue, formatSpan, isReversed, previewDue, rateCard, type Grade } from '../../lib/fsrs'
+import { MC_ROUNDS, Rating, blankOut, buildQueue, correctCounts, formatSpan, previewDue, rateCard, type Grade } from '../../lib/fsrs'
+import { distractorPool, glossFor } from '../../lib/glossary'
+import { meaningMatches, pickDistractors, shuffled } from '../../lib/meaning'
 import { speak, ttsAvailable } from '../../lib/tts'
 
-/** Flashcard review (PLAN §7.2): one card at a time, four FSRS ratings. */
+/** The learner's answer to the card on screen, once given. */
+interface Answer {
+  correct: boolean
+  choice?: string // multiple choice
+  typed?: string // typed recall
+}
+
+/**
+ * Flashcard review (PLAN §7.2), graded by the app: a card's first
+ * MC_ROUNDS correct answers are multiple choice, after that the learner types
+ * the meaning. Right → "Bien", wrong → "Otra vez" (FSRS ratings).
+ */
 export default function ReviewScreen() {
   const settings = useLiveQuery(() => db.settings.get(1))
+  const allCards = useLiveQuery(() => db.cards.toArray(), [])
   const [queue, setQueue] = useState<Card[] | null>(null)
-  const [revealed, setRevealed] = useState(false)
+  const [counts, setCounts] = useState<Map<string, number>>(new Map())
+  const [answer, setAnswer] = useState<Answer | null>(null)
+  const [typed, setTyped] = useState('')
   const [done, setDone] = useState(0)
   const [busy, setBusy] = useState(false)
+  const input = useRef<HTMLInputElement>(null)
 
-  // Build the queue once; rating does not reshuffle it under the learner's thumb.
+  // Build the queue once; grading does not reshuffle it under the learner's thumb.
   useEffect(() => {
     if (!settings || queue) return
     let cancelled = false
-    buildQueue(settings).then((q) => {
-      if (!cancelled) setQueue(q)
+    buildQueue(settings).then(async (q) => {
+      const c = await correctCounts(q.map((x) => x.id))
+      if (cancelled) return
+      setCounts(c)
+      setQueue(q)
     })
     return () => {
       cancelled = true
     }
   }, [settings, queue])
 
-  if (!settings || !queue) return <main className="p-5 text-muted">Cargando…</main>
+  const card = queue?.[0]
+  const gloss = card ? glossFor(card.lemma ?? '') : undefined
+  const answers = card ? [card.meaning, ...(gloss ? [gloss] : [])] : []
 
-  const card = queue[0]
+  // Options stay put while this card is on screen (seeded by card + rep count).
+  const options = useMemo(() => {
+    if (!card || !allCards) return []
+    const seed = `${card.id}:${card.fsrs.reps}`
+    const others = allCards.filter((c) => c.id !== card.id).map((c) => c.meaning)
+    const pool = [...shuffled(others, seed), ...distractorPool(card.meaning, seed)]
+    return shuffled([card.meaning, ...pickDistractors(answers, pool, seed)], seed + 'o')
+  }, [card?.id, card?.fsrs.reps, allCards === undefined])
+  // Too few wrong options to make a fair question → typed recall instead.
+  const multipleChoice = !!card && (counts.get(card.id) ?? 0) < MC_ROUNDS && options.length >= 4
+
+  useEffect(() => {
+    if (card && !multipleChoice && !answer) {
+      const t = window.setTimeout(() => input.current?.focus(), 50)
+      return () => window.clearTimeout(t)
+    }
+  }, [card, multipleChoice, answer])
+
+  if (!settings || !queue || !allCards) return <main className="p-5 text-muted">Cargando…</main>
+
   const total = done + queue.length
 
-  const rate = async (grade: Grade) => {
+  const next = async (grade: Grade) => {
     if (!card || busy) return
     setBusy(true)
     try {
       const now = new Date()
       const updated = await rateCard(card, grade, now)
+      if (grade > 1) setCounts((m) => new Map(m).set(card.id, (m.get(card.id) ?? 0) + 1))
       const rest = queue.slice(1)
-      // "Otra vez" (1-minute learning step) comes back later in this session;
-      // "Difícil" (6 min) and "Bien" (10 min) wait for the next session.
+      // A miss (1-minute learning step) comes back later in this session.
       if (updated.fsrs.due.getTime() - now.getTime() < 5 * 60_000) rest.push(updated)
       else setDone((d) => d + 1)
       setQueue(rest)
-      setRevealed(false)
+      setAnswer(null)
+      setTyped('')
     } finally {
       setBusy(false)
     }
@@ -70,9 +112,23 @@ export default function ReviewScreen() {
     )
   }
 
-  const reversed = isReversed(card)
-  const due = revealed ? previewDue(card) : null
+  const grade: Grade = answer?.correct ? Rating.Good : Rating.Again
+  const due = answer ? previewDue(card) : null
   const now = new Date()
+
+  const choose = (opt: string) => {
+    if (answer) return
+    setAnswer({ correct: opt === card.meaning, choice: opt })
+  }
+  const submitTyped = (giveUp = false) => {
+    if (answer) return
+    if (!giveUp && !typed.trim()) {
+      input.current?.focus()
+      return
+    }
+    input.current?.blur()
+    setAnswer({ correct: !giveUp && meaningMatches(typed, answers), typed: giveUp ? '' : typed })
+  }
 
   return (
     <>
@@ -86,63 +142,114 @@ export default function ReviewScreen() {
         }
       />
       <main className="mx-auto flex max-w-md flex-col gap-4 p-5 pb-32">
-        <section className="min-h-56 rounded-2xl border border-line bg-card p-5">
-          <p className="text-xs uppercase tracking-wide text-muted">{reversed ? '¿Cómo se dice?' : '¿Qué significa?'}</p>
-
-          {reversed ? (
-            <>
-              <p className="mt-2 text-2xl font-bold">{card.meaning}</p>
-              {card.exampleEn && <p className="mt-2 text-muted">{card.exampleEn}</p>}
-            </>
-          ) : (
-            <>
-              <div className="mt-2 flex items-center gap-3">
-                <p className="text-2xl font-bold">{card.word}</p>
-                {ttsAvailable() && <SpeakButton onClick={() => say(card.word)} />}
-              </div>
-              <p className="mt-2 text-muted">{blankOut(card.exampleEs, card.word)}</p>
-            </>
-          )}
-
-          {revealed && (
-            <div className="mt-4 border-t border-line pt-4">
-              {reversed ? (
-                <div className="flex items-center gap-3">
-                  <p className="text-2xl font-bold text-accent">{card.word}</p>
-                  {ttsAvailable() && <SpeakButton onClick={() => say(card.word)} />}
-                </div>
-              ) : (
-                <p className="text-xl font-semibold text-accent">{card.meaning}</p>
-              )}
-              <div className="mt-2 flex items-start gap-2">
-                <p className="flex-1 leading-relaxed">{card.exampleEs}</p>
-                {ttsAvailable() && <SpeakButton onClick={() => say(card.exampleEs)} small />}
-              </div>
-              {card.exampleEn && !reversed && <p className="mt-1 text-sm text-muted">{card.exampleEn}</p>}
-            </div>
-          )}
+        <section className="rounded-2xl border border-line bg-card p-5">
+          <p className="text-xs uppercase tracking-wide text-muted">
+            ¿Qué significa? · {multipleChoice ? 'elige' : 'escribe'}
+          </p>
+          <div className="mt-2 flex items-center gap-3">
+            <p className="text-2xl font-bold">{card.word}</p>
+            {ttsAvailable() && <SpeakButton onClick={() => say(card.word)} />}
+          </div>
+          <p className="mt-2 text-muted">{blankOut(card.exampleEs, card.word)}</p>
         </section>
 
-        {!revealed ? (
-          <button type="button" onClick={() => setRevealed(true)} className="rounded-xl bg-accent px-4 py-4 text-lg font-medium text-on-accent">
-            Mostrar respuesta
-          </button>
+        {multipleChoice ? (
+          <div className="grid gap-2" role="group" aria-label="Opciones">
+            {options.map((opt) => {
+              const isAnswer = opt === card.meaning
+              const picked = answer?.choice === opt
+              const cls = !answer
+                ? 'border-line bg-card'
+                : isAnswer
+                  ? 'border-ok bg-ok-soft'
+                  : picked
+                    ? 'border-accent bg-accent-soft'
+                    : 'border-line bg-card opacity-60'
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  disabled={!!answer}
+                  onClick={() => choose(opt)}
+                  className={`rounded-xl border px-4 py-3 text-left ${cls}`}
+                >
+                  {answer && isAnswer ? '✓ ' : answer && picked ? '✗ ' : ''}
+                  {opt}
+                </button>
+              )
+            })}
+          </div>
         ) : (
-          <div className="grid grid-cols-4 gap-2">
-            {GRADES.map((g) => (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              submitTyped()
+            }}
+            className="flex flex-col gap-2"
+          >
+            <input
+              ref={input}
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+              readOnly={!!answer}
+              placeholder="escribe el significado en inglés"
+              aria-label="Tu respuesta"
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoComplete="off"
+              className={`w-full rounded-xl border px-3 py-3 text-base ${
+                !answer ? 'border-line bg-card' : answer.correct ? 'border-ok bg-ok-soft' : 'border-accent bg-accent-soft'
+              }`}
+            />
+            {!answer && (
+              <div className="flex gap-2">
+                <button type="submit" className="flex-1 rounded-xl bg-accent px-4 py-3 font-medium text-on-accent">
+                  Comprobar
+                </button>
+                <button type="button" onClick={() => submitTyped(true)} className="rounded-xl border border-line px-4 py-3 text-muted">
+                  No sé
+                </button>
+              </div>
+            )}
+          </form>
+        )}
+
+        {answer && (
+          <section className="rounded-2xl border border-line bg-card p-5" role="status">
+            <p className={`font-semibold ${answer.correct ? 'text-ok' : 'text-accent'}`}>
+              {answer.correct ? '✓ ¡Correcto!' : answer.typed === '' ? 'La respuesta:' : '✗ No exactamente.'}
+            </p>
+            <p className="mt-1 text-xl font-semibold">{card.meaning}</p>
+            {gloss && !meaningMatches(card.meaning, [gloss]) && <p className="text-sm text-muted">También: {gloss}</p>}
+            <div className="mt-3 flex items-start gap-2">
+              <p className="flex-1 leading-relaxed">{card.exampleEs}</p>
+              {ttsAvailable() && <SpeakButton onClick={() => say(card.exampleEs)} small />}
+            </div>
+            {card.exampleEn && <p className="mt-1 text-sm text-muted">{card.exampleEn}</p>}
+          </section>
+        )}
+
+        {answer && (
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void next(grade)}
+              className="rounded-xl bg-accent px-4 py-4 text-lg font-medium text-on-accent disabled:opacity-50"
+            >
+              Siguiente
+              <span className="ml-2 text-sm opacity-80">· vuelve en {due ? formatSpan(due[grade], now) : ''}</span>
+            </button>
+            {!answer.correct && answer.typed && (
               <button
-                key={g}
                 type="button"
                 disabled={busy}
-                onClick={() => void rate(g)}
-                className={`flex flex-col items-center rounded-xl px-1 py-3 disabled:opacity-50 ${
-                  g === 1 ? 'bg-accent-soft text-accent' : g === 3 ? 'bg-accent text-on-accent' : 'border border-line bg-card'
-                }`}
+                onClick={() => void next(Rating.Good)}
+                className="rounded-xl border border-line px-4 py-3 text-sm text-muted disabled:opacity-50"
               >
-                <span className="text-sm font-medium">{GRADE_LABEL[g]}</span>
-                <span className="mt-0.5 text-[11px] opacity-80">{due ? formatSpan(due[g], now) : ''}</span>
+                Mi respuesta también vale
               </button>
-            ))}
+            )}
           </div>
         )}
       </main>

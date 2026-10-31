@@ -92,3 +92,45 @@ this file records what was picked where the plan left room.
   a subpath import could trim it later.
 - **Vocabulary list** reuses `LookupSheet` for editing by building a
   `Selection` from the card's own example sentence.
+
+## Phase 3 — listening, reading layout, graded review (2026-10-30)
+
+- **Reading layout deviates from PLAN §7.1** at Hazel's request (phase 1
+  screen was "clunky and hard to parse"). Text renders as flowing paragraphs
+  (`lib/paragraphs.ts`): a segment with `break: true` starts a block, and a
+  run of dialogue lines (leading em dash) forms one exchange with each line
+  on its own row. One "en" chip per block replaces the per-sentence ⓘ; a
+  top-bar toggle shows every translation. The chip is kept on the same line
+  as the last word so it never wraps alone.
+- **Pack schema gained** `segments[].break` and a `glossary` (lowercase
+  surface form → English meanings, alternatives separated by " / "). The
+  validator warns when a reading/listening word is missing from the
+  glossary. Pack 01 has a full glossary (213 words).
+- **Listening** (`/listen/:itemId`) speaks one segment per utterance with
+  `speakSegment`, advancing on `onend` (PLAN §7.3). Pause = cancel and
+  remember the sentence index, because iOS `speechSynthesis.pause()` is
+  unreliable. A watchdog reports an error if `onstart` never fires (no
+  Spanish voice / silent switch). Speed steps 0.7–1.2× persist to
+  `settings.ttsRate`. Captions can be hidden; tapping a sentence jumps there;
+  tapping a word pauses and opens the lookup sheet.
+- **Shadowing** plays the current sentence, then records up to 8 s with
+  `MediaRecorder` (audio/mp4 on iOS, webm/opus elsewhere) and stores it in
+  `recordings` with the new optional `segmentId`.
+- **Saving a word checks the guess** (Hazel's request). The sheet asks "¿Qué
+  crees que significa?"; "Comprobar" compares the guess with the glossary
+  (`lib/meaning.ts`: normalised, plurals and small typos forgiven, any
+  alternative accepted). Wrong → shows the meaning and offers to save it or
+  keep the learner's own. Phrases and words without an entry show the
+  sentence translation instead. Editing an existing card skips the check.
+- **Review is graded by the app** (Hazel's request), replacing the four
+  self-rating buttons. A card is multiple choice until it has 2 correct
+  answers (`MC_ROUNDS`, counted from review rows with rating > 1), then the
+  learner types the meaning. Right → FSRS "Bien", wrong or "No sé" →
+  "Otra vez". A wrong typed answer offers "Mi respuesta también vale"
+  (→ "Bien") because English meanings have many phrasings. Wrong options
+  come from other saved cards first, then glossary meanings of the same kind
+  (verb-like vs not), never one the glossary would also accept. Falls back
+  to typed recall if fewer than three wrong options exist. "Difícil" and
+  "Fácil" are no longer used.
+- **Reverse cards dropped**: PLAN §7.2's English-front cards (reps ≥ 3) are
+  replaced by typed recall of the meaning, which is what Hazel asked for.

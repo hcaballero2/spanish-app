@@ -156,7 +156,7 @@ export default function Home() {
       )}
 
       <footer className="mt-4 text-center text-xs text-muted">
-        Fase 2 · {isStandalone() ? 'instalada' : 'en navegador'}
+        Fase 3 · {isStandalone() ? 'instalada' : 'en navegador'}
         {offlineReady ? ' · lista sin conexión' : ''}
       </footer>
     </main>

@@ -4,7 +4,6 @@ import { db } from '../../db/db'
 import TopBar from '../../components/TopBar'
 
 const PHASE: Record<string, string> = {
-  listening: 'fase 3',
   speaking: 'fase 5',
   writing: 'fase 5',
   grammar: 'fase 8',

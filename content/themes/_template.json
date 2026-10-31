@@ -17,6 +17,10 @@
       "recommendedIn": "https://www.reddit.com/r/Spanish/comments/.../"
     }
   ],
+  "glossary": {
+    "oración": "sentence",
+    "otra": "another / other"
+  },
   "items": [
     {
       "id": "template-reading-1",
@@ -24,7 +28,10 @@
       "level": "A2",
       "title": "Reading title",
       "estimatedMinutes": 8,
-      "segments": [{ "id": "r1-1", "es": "Oración en español.", "en": "Sentence in English." }],
+      "segments": [
+        { "id": "r1-1", "es": "Oración en español.", "en": "Sentence in English." },
+        { "id": "r1-2", "es": "Otra oración, en un párrafo nuevo.", "en": "Another sentence, in a new paragraph.", "break": true }
+      ],
       "questions": [{ "q": "¿...?", "options": ["a", "b", "c"], "answer": 0 }]
     },
     {

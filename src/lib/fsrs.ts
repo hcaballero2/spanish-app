@@ -18,9 +18,16 @@ export function isNew(card: Card): boolean {
   return card.fsrs.state === State.New
 }
 
-/** A card is shown "reversed" (English on the front) once it has been seen a few times. */
-export function isReversed(card: Card): boolean {
-  return card.fsrs.reps >= 3
+/** A card is multiple choice until it has been answered correctly this many times; then typed recall. */
+export const MC_ROUNDS = 2
+
+/** Correct answers (rating above "Otra vez") per card, for choosing multiple choice vs typed recall. */
+export async function correctCounts(cardIds: string[]): Promise<Map<string, number>> {
+  const m = new Map<string, number>(cardIds.map((id) => [id, 0]))
+  if (cardIds.length === 0) return m
+  const rows = await db.reviews.where('cardId').anyOf(cardIds).toArray()
+  for (const r of rows) if (r.rating > 1) m.set(r.cardId, (m.get(r.cardId) ?? 0) + 1)
+  return m
 }
 
 /** Next due date per grade, for the labels under the rating buttons. */

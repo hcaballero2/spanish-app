@@ -7,6 +7,7 @@ import { applyTheme } from './lib/theme'
 import Home from './features/home/Home'
 import ThemeView from './features/theme/ThemeView'
 import ReadingScreen from './features/reading/ReadingScreen'
+import ListeningScreen from './features/listening/ListeningScreen'
 import ReviewScreen from './features/review/ReviewScreen'
 import VocabList from './features/vocab/VocabList'
 import ComingSoon from './features/soon/ComingSoon'
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/theme/:themeId" element={<ThemeView />} />
         <Route path="/read/:itemId" element={<ReadingScreen />} />
+        <Route path="/listen/:itemId" element={<ListeningScreen />} />
         <Route path="/review" element={<ReviewScreen />} />
         <Route path="/vocab" element={<VocabList />} />
         <Route path="/soon/:itemId" element={<ComingSoon />} />

@@ -3,6 +3,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { ThemePackSchema, READING_WORDS, countWords } from '../src/content/schema'
+import { tokenize } from '../src/lib/words'
 
 const dir = join(process.cwd(), 'content', 'themes')
 const files = readdirSync(dir).filter((f) => f.endsWith('.json') && !f.startsWith('_'))
@@ -57,6 +58,16 @@ for (const file of files) {
       errors++
       notes.push(`  ✗ ${item.id}: uses vosotros forms (Mexican Spanish only)`)
     }
+  }
+  // Every word in a reading/listening text should be in the glossary (answer key for meaning checks).
+  const missing = new Set<string>()
+  for (const item of pack.items) {
+    if (item.skill !== 'reading' && item.skill !== 'listening') continue
+    for (const s of item.segments) for (const t of tokenize(s.es)) if (t.key && !pack.glossary?.[t.key]) missing.add(t.key)
+  }
+  if (missing.size > 0) {
+    warnings++
+    notes.push(`  ⚠ glossary is missing ${missing.size} word(s): ${[...missing].slice(0, 15).join(', ')}${missing.size > 15 ? ', …' : ''}`)
   }
   console.log(`${notes.some((n) => n.includes('✗')) ? '✗' : '✓'} ${file}  (${pack.level}, ${pack.items.length} items)`)
   for (const n of notes) console.log(n)

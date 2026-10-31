@@ -60,6 +60,8 @@ export interface Segment {
   id: string
   es: string
   en?: string
+  /** Starts a new paragraph (see lib/paragraphs.ts). */
+  break?: boolean
 }
 
 export interface Item {
@@ -151,6 +153,7 @@ export interface ThemeProgress {
 export interface Recording {
   id?: number
   itemId: string
+  segmentId?: string // shadowing one sentence (listening); absent for whole-item speaking recordings
   blob: Blob
   createdAt: Date
 }
