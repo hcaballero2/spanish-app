@@ -56,3 +56,39 @@ this file records what was picked where the plan left room.
   fetcher, mirrors down). `content/SOURCES.md` records which thread links
   were found via search engines and flags vote counts for re-verification in
   phase 7.
+
+## Phase 2 (2026-10-30)
+
+- **ts-fsrs legacy API** (`fsrs()`, `createEmptyCard()`, `.next()`, `.repeat()`)
+  rather than the new async `DefaultScheduler`. It is marked deprecated in
+  ts-fsrs 6.0 but still shipped, and its `Card` shape is exactly what phase 1
+  stored under `cards.fsrs`, so no migration. Model: FSRS-6, default weights,
+  fuzz on, learning steps 1 m / 10 m, relearning 10 m. Revisit (and migrate
+  `cards.fsrs`) if a later ts-fsrs release removes the legacy entry points.
+- **Review queue** (`buildQueue`): cards with `fsrs.due <= now`, newest theme
+  first (PLAN §7.2), reviewed cards before new ones, new cards capped at
+  `newCardsPerDay` minus the new cards already introduced today. "Introduced
+  today" is counted from `reviews.wasNew`, a new optional field on the
+  review row.
+- **Within a session, only "Otra vez" repeats** (its learning step is 1 min
+  and the card is re-queued at the end). "Difícil" (6 min) and "Bien"
+  (10 min) wait for the next session, so a short session actually ends; Anki
+  would show them again.
+- **Reverse cards** (English on the front) start at `reps >= 3`, per PLAN §7.2.
+- **TTS** uses `speechSynthesis` with `lang es-MX`, preferring an es-MX voice,
+  else any Spanish voice. Only triggered from a tap (iOS requirement).
+- **Dark mode** follows the system by default. Colour tokens live in
+  `@theme`; the dark values override the same custom properties under
+  `prefers-color-scheme: dark` (unless `html[data-theme="light"]`) and under
+  `html[data-theme="dark"]`. New tokens: `card` (surface), `on-accent`,
+  `ok`/`ok-soft` (correct answers) replace the hardcoded white/green classes.
+  `settings.theme` (`system | light | dark`) is applied by `applyTheme`,
+  which also rewrites the `theme-color` metas (iOS status bar) and caches the
+  choice in `localStorage` so an inline script in `index.html` applies it
+  before first paint. Settings rows written before this field existed are
+  back-filled with defaults in `ensureSettings`.
+- **Bundle is ~520 kB (163 kB gzip)** mostly because ts-fsrs 6 re-exports every
+  model from its index. Precached once by the service worker, so left as-is;
+  a subpath import could trim it later.
+- **Vocabulary list** reuses `LookupSheet` for editing by building a
+  `Selection` from the card's own example sentence.

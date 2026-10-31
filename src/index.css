@@ -1,12 +1,54 @@
 @import "tailwindcss";
 
+/* Design tokens. Light values live in @theme (which also generates the
+   Tailwind utilities); dark values override the same custom properties. */
 @theme {
   --color-paper: #faf7f2;
+  --color-card: #ffffff;
   --color-ink: #1f1a17;
   --color-muted: #6b625c;
   --color-accent: #d6336c;
   --color-accent-soft: #fbe3ec;
+  --color-on-accent: #ffffff;
   --color-line: #e6dfd6;
+  --color-ok: #2f855a;
+  --color-ok-soft: #e3f3ea;
+}
+
+@layer base {
+  :root { color-scheme: light; }
+
+  /* System dark, unless the user forced light in settings. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --color-paper: #171412;
+      --color-card: #221e1b;
+      --color-ink: #f1ece6;
+      --color-muted: #a39a92;
+      --color-accent: #f0608e;
+      --color-accent-soft: #3d2029;
+      --color-on-accent: #1f1a17;
+      --color-line: #3a332e;
+      --color-ok: #6fcf97;
+      --color-ok-soft: #1f3a2b;
+    }
+  }
+
+  /* User forced dark in settings. */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-paper: #171412;
+    --color-card: #221e1b;
+    --color-ink: #f1ece6;
+    --color-muted: #a39a92;
+    --color-accent: #f0608e;
+    --color-accent-soft: #3d2029;
+    --color-on-accent: #1f1a17;
+    --color-line: #3a332e;
+    --color-ok: #6fcf97;
+    --color-ok-soft: #1f3a2b;
+  }
 }
 
 html, body, #root {
@@ -22,4 +64,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+select, input, textarea {
+  color: var(--color-ink);
 }

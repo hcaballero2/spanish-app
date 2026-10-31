@@ -60,7 +60,7 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
             placeholder="escribe el significado en inglés"
             autoCapitalize="off"
             autoCorrect="off"
-            className="mt-1 w-full rounded-xl border border-line bg-white px-3 py-3 text-base"
+            className="mt-1 w-full rounded-xl border border-line bg-card px-3 py-3 text-base"
           />
         </label>
 
@@ -68,7 +68,7 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
           <button
             type="submit"
             disabled={busy}
-            className="flex-1 rounded-xl bg-accent px-4 py-3 font-medium text-white disabled:opacity-50"
+            className="flex-1 rounded-xl bg-accent px-4 py-3 font-medium text-on-accent disabled:opacity-50"
           >
             {existing ? 'Guardar cambios' : 'Guardar tarjeta'}
           </button>

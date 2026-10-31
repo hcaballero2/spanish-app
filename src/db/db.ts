@@ -46,7 +46,12 @@ export const db = new SpanishDB()
 /** Returns the settings row, creating it with defaults on first run. */
 export async function ensureSettings(): Promise<Settings> {
   const existing = await db.settings.get(1)
-  if (existing) return existing
+  if (existing) {
+    // Fill in fields added after the row was first written (e.g. `theme`).
+    const merged: Settings = { ...DEFAULT_SETTINGS, ...existing }
+    if (Object.keys(merged).length !== Object.keys(existing).length) await db.settings.put(merged)
+    return merged
+  }
   await db.settings.put(DEFAULT_SETTINGS)
   return DEFAULT_SETTINGS
 }

@@ -39,7 +39,7 @@ export default function ThemeView() {
         <p className="text-sm text-muted">{theme.description}</p>
         <p className="text-sm">
           <span className="font-semibold">{doneCount}</span> de {items.length} terminados
-          {theme.status === 'done' && <span className="ml-2 text-green-700">· tema completado ✓</span>}
+          {theme.status === 'done' && <span className="ml-2 text-ok">· tema completado ✓</span>}
         </p>
 
         {SKILLS.map((skill) => {
@@ -48,7 +48,7 @@ export default function ThemeView() {
           return (
             <section key={skill}>
               <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{SKILL_LABEL[skill]}</h2>
-              <ul className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
+              <ul className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-card">
                 {group.map((item) => {
                   const st = progress.get(item.id)?.status ?? 'new'
                   return (
@@ -56,7 +56,7 @@ export default function ThemeView() {
                       <Link to={itemRoute(item)} className="flex items-center gap-3 px-4 py-3 active:bg-accent-soft">
                         <span
                           className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${
-                            st === 'done' ? 'border-green-600 bg-green-600 text-white' : 'border-line text-transparent'
+                            st === 'done' ? 'border-ok bg-ok text-on-accent' : 'border-line text-transparent'
                           }`}
                         >
                           ✓
@@ -75,7 +75,7 @@ export default function ThemeView() {
           )
         })}
 
-        <section className="rounded-2xl border border-line bg-white p-4">
+        <section className="rounded-2xl border border-line bg-card p-4">
           <button type="button" onClick={() => setShowCulture((v) => !v)} className="flex w-full items-center justify-between font-semibold">
             Nota cultural <span className="text-muted">{showCulture ? '−' : '+'}</span>
           </button>

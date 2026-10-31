@@ -19,7 +19,11 @@ export interface Settings {
   activeThemeId?: string
   reviewHour: number // 0–23, end-of-day nudge (PLAN §7.7)
   newCardsPerDay: number
+  theme: ThemePref
 }
+
+export type ThemePref = 'system' | 'light' | 'dark'
+export const THEME_PREFS: ThemePref[] = ['system', 'light', 'dark']
 
 export const DEFAULT_SETTINGS: Settings = {
   id: 1,
@@ -30,6 +34,7 @@ export const DEFAULT_SETTINGS: Settings = {
   ttsRate: 0.9,
   reviewHour: 20,
   newCardsPerDay: 20,
+  theme: 'system',
 }
 
 export interface ThemeSource {
@@ -92,7 +97,7 @@ export interface FsrsState {
   learning_steps: number
   reps: number
   lapses: number
-  state: number // ts-fsrs State enum: 0 New, 1 Learning, 2 Review, 3 Relearning
+  state: 0 | 1 | 2 | 3 // ts-fsrs State: 0 New, 1 Learning, 2 Review, 3 Relearning
   last_review?: Date
 }
 
@@ -114,6 +119,8 @@ export interface Review {
   cardId: string
   rating: 1 | 2 | 3 | 4
   reviewedAt: Date
+  /** True when this was the card's first review (it was in the New state). Used for the new-cards-per-day cap. */
+  wasNew?: boolean
 }
 
 export interface Session {

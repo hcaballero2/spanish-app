@@ -57,12 +57,12 @@ export default function ReadingScreen() {
             {item.questions.map((q, qi) => {
               const picked = answers[qi]
               return (
-                <div key={qi} className="rounded-2xl border border-line bg-white p-4">
+                <div key={qi} className="rounded-2xl border border-line bg-card p-4">
                   <p className="mb-2 font-medium">{q.q}</p>
                   <div className="space-y-1">
                     {q.options.map((opt, oi) => {
                       const state =
-                        picked === undefined ? '' : oi === q.answer ? 'border-green-600 bg-green-50' : oi === picked ? 'border-accent bg-accent-soft' : 'opacity-60'
+                        picked === undefined ? '' : oi === q.answer ? 'border-ok bg-ok-soft' : oi === picked ? 'border-accent bg-accent-soft' : 'opacity-60'
                       return (
                         <button
                           key={oi}
@@ -89,7 +89,7 @@ export default function ReadingScreen() {
         <button
           type="button"
           onClick={markDone}
-          className={`mt-4 w-full rounded-xl px-4 py-3 font-medium ${done ? 'border border-line text-muted' : 'bg-accent text-white'}`}
+          className={`mt-4 w-full rounded-xl px-4 py-3 font-medium ${done ? 'border border-line text-muted' : 'bg-accent text-on-accent'}`}
         >
           {done ? 'Terminado ✓' : 'Marcar como terminado'}
         </button>
@@ -122,7 +122,7 @@ export default function ReadingScreen() {
 
       {toast && (
         <div className="pointer-events-none fixed inset-x-0 bottom-24 z-30 flex justify-center">
-          <span className="rounded-full bg-ink px-4 py-2 text-sm text-white shadow">{toast}</span>
+          <span className="rounded-full bg-ink px-4 py-2 text-sm text-paper shadow">{toast}</span>
         </div>
       )}
     </>

@@ -159,6 +159,102 @@ try {
     await waitForText('1 de 9 terminados')
   })
 
+  await step('Home shows 1 due card and a review button', async () => {
+    await evaluate(`location.hash = '#/'`)
+    await waitForText('1 guardada · 1 pendiente')
+    await waitForText('Repasar 1')
+  })
+
+  await step('Review: front blanks the word, reveal shows meaning, rate Good', async () => {
+    await evaluate(`location.hash = '#/review'`)
+    const body = await waitForText('Mostrar respuesta')
+    if (!body.includes('taquero')) throw new Error('front missing word')
+    if (!body.includes('____')) throw new Error('example not blanked')
+    if (body.includes('taco seller')) throw new Error('meaning leaked before reveal')
+    await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.includes('Mostrar respuesta')).click()`)
+    const back = await waitForText('taco seller')
+    for (const t of ['Otra vez', 'Difícil', 'Bien', 'Fácil']) if (!back.includes(t.toLowerCase())) throw new Error(`missing ${t}`)
+    await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.startsWith('Bien')).click()`)
+    await waitForText('¡Listo!')
+    await waitForText('1 tarjeta repasada')
+    const stored = await evaluate(`(async () => {
+      const req = indexedDB.open('spanish-app')
+      const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error) })
+      const get = (store) => new Promise((res) => { const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess = () => res(r.result) })
+      const cards = await get('cards'); const reviews = await get('reviews')
+      return { reps: cards[0].fsrs.reps, state: cards[0].fsrs.state, dueInMs: cards[0].fsrs.due - Date.now(), reviews: reviews.map(r => ({ rating: r.rating, wasNew: r.wasNew })) }
+    })()`)
+    if (stored.reps !== 1 || stored.state === 0) throw new Error('card not scheduled: ' + JSON.stringify(stored))
+    if (stored.dueInMs < 5 * 60000) throw new Error('Good on a new card should schedule ≥ 10 min out: ' + JSON.stringify(stored))
+    if (stored.reviews.length !== 1 || stored.reviews[0].rating !== 3 || stored.reviews[0].wasNew !== true) throw new Error('review row wrong: ' + JSON.stringify(stored))
+  })
+
+  await step('Home shows nothing pending after review', async () => {
+    await evaluate(`location.hash = '#/'`)
+    await waitForText('1 guardada · 0 pendientes')
+    await waitForText('Nada pendiente por ahora')
+  })
+
+  await step('Vocab list shows the card, search filters, edit sheet opens', async () => {
+    await evaluate(`location.hash = '#/vocab'`)
+    const body = await waitForText('taco seller')
+    if (!body.includes('taquero')) throw new Error('word missing')
+    await evaluate(`(() => {
+      const input = document.querySelector('input[type=search]')
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+      setter.call(input, 'zzz'); input.dispatchEvent(new Event('input', { bubbles: true }))
+    })()`)
+    await waitForText('Sin resultados')
+    await evaluate(`(() => {
+      const input = document.querySelector('input[type=search]')
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+      setter.call(input, 'taq'); input.dispatchEvent(new Event('input', { bubbles: true }))
+    })()`)
+    await waitForText('taquero')
+    await evaluate(`[...document.querySelectorAll('li button')].find(b => b.textContent.includes('taquero')).click()`)
+    await waitForText('Guardar cambios')
+    await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent === 'Cancelar').click()`)
+  })
+
+  await step('Dark mode: setting switches tokens, theme-color and localStorage', async () => {
+    await evaluate(`location.hash = '#/'`)
+    await waitForText('Apariencia')
+    const light = await evaluate(`getComputedStyle(document.body).backgroundColor`)
+    if (light !== 'rgb(250, 247, 242)') throw new Error('light paper wrong: ' + light)
+    await evaluate(`(() => {
+      const sel = document.querySelector('select[aria-label="Tema"]')
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
+      setter.call(sel, 'dark'); sel.dispatchEvent(new Event('change', { bubbles: true }))
+    })()`)
+    const start = Date.now()
+    let dark = ''
+    while (Date.now() - start < 5000) {
+      dark = await evaluate(`getComputedStyle(document.body).backgroundColor`)
+      if (dark === 'rgb(23, 20, 18)') break
+      await sleep(100)
+    }
+    if (dark !== 'rgb(23, 20, 18)') throw new Error('dark paper wrong: ' + dark)
+    const meta = await evaluate(`[...document.querySelectorAll('meta[name="theme-color"]')].map(m => m.content + '|' + (m.getAttribute('media') ?? '')).join(',')`)
+    if (meta !== '#171412|,#171412|') throw new Error('theme-color metas: ' + meta)
+    const card = await evaluate(`getComputedStyle(document.querySelector('section.bg-card')).backgroundColor`)
+    if (card !== 'rgb(34, 30, 27)') throw new Error('card surface wrong in dark: ' + card)
+    const ls = await evaluate(`localStorage.getItem('theme')`)
+    if (ls !== 'dark') throw new Error('localStorage theme: ' + ls)
+    // Reload: the pre-paint script must apply dark before React does.
+    await send('Page.navigate', { url: base + '#/' })
+    await waitForText('Hoy')
+    const early = await evaluate(`document.documentElement.dataset.theme`)
+    if (early !== 'dark') throw new Error('data-theme after reload: ' + early)
+    await evaluate(`(() => {
+      const sel = document.querySelector('select[aria-label="Tema"]')
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set
+      setter.call(sel, 'system'); sel.dispatchEvent(new Event('change', { bubbles: true }))
+    })()`)
+    await sleep(300)
+    const back = await evaluate(`document.documentElement.dataset.theme ?? 'none'`)
+    if (back !== 'none') throw new Error('system pref should clear data-theme: ' + back)
+  })
+
   await step('No console errors', async () => {
     if (consoleErrors.length) throw new Error(consoleErrors.join('\n'))
   })

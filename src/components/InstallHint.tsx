@@ -4,7 +4,7 @@ import { isIOS, isStandalone } from '../lib/platform'
 export default function InstallHint() {
   if (isStandalone()) return null
   return (
-    <section className="rounded-2xl border border-line bg-white p-4 text-sm leading-relaxed">
+    <section className="rounded-2xl border border-line bg-card p-4 text-sm leading-relaxed">
       <h2 className="mb-1 font-semibold">Instala la app</h2>
       {isIOS() ? (
         <ol className="list-decimal space-y-1 pl-5 text-muted">

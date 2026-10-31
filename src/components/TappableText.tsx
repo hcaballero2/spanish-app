@@ -180,7 +180,7 @@ export default function TappableText({ segments, known, onSelect, activeSegmentI
                 onClick={() => toggleGloss(seg.id)}
                 aria-label="Ver traducción"
                 className={`ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] align-middle ${
-                  open.has(seg.id) ? 'bg-accent text-white' : 'bg-line text-muted'
+                  open.has(seg.id) ? 'bg-accent text-on-accent' : 'bg-line text-muted'
                 }`}
               >
                 i
