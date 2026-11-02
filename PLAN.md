@@ -204,9 +204,11 @@ Each screen with content runs a **session timer** (Section 10).
 - **Tap a word** → bottom sheet with:
   1. the word, and the sentence it came from (becomes the card's example);
   2. a "suggested meaning" fetched from Wiktionary
-     (`https://es.wiktionary.org/api/rest_v1/page/definition/{word}` first,
-     fallback `https://en.wiktionary.org/api/rest_v1/page/definition/{word}`);
-     show "no suggestion" quietly if nothing comes back;
+     (`https://en.wiktionary.org/api/rest_v1/page/definition/{word}`, Spanish
+     senses only; the es.wiktionary endpoint answers 501, checked 2026-11-01);
+     show nothing if nothing comes back. Built (2026-11-01) as «Wiktionary
+     (comunitario)», shown only after the learner's guess and ranked below the
+     dictionary-checked glossary meaning;
   3. an **"Open in WordReference"** button →
      `https://www.wordreference.com/es/en/translation.asp?spen={word}` in a new
      tab (`target=_blank`);

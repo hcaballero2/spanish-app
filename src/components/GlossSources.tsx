@@ -1,8 +1,9 @@
 import type { GlossSource } from '../content/schema'
 import { sourcesFor } from '../lib/glossary'
+import { wordReferenceUrl } from '../lib/wiktionary'
 
 const DICTIONARIES: Record<Exclude<GlossSource, 'name'>, { label: string; url: (w: string) => string }> = {
-  wordreference: { label: 'WordReference', url: (w) => `https://www.wordreference.com/es/en/translation.asp?spen=${encodeURIComponent(w)}` },
+  wordreference: { label: 'WordReference', url: wordReferenceUrl },
   spanishdict: { label: 'SpanishDict', url: (w) => `https://www.spanishdict.com/translate/${encodeURIComponent(w)}` },
   dem: { label: 'DEM (México)', url: (w) => `https://dem.colmex.mx/Ver/${encodeURIComponent(w)}` },
 }

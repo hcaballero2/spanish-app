@@ -105,6 +105,18 @@ try {
   await send('Page.enable')
   // Errors whose CDP description is just a class name (e.g. DexieError) get logged with message + stack.
   await send('Page.addScriptToEvaluateOnNewDocument', { source: `addEventListener('error', (e) => console.error('[page]', e.error?.name, e.error?.message, e.error?.stack)); addEventListener('unhandledrejection', (e) => console.error('[page]', e.reason?.name, e.reason?.message, e.reason?.stack))` })
+  // Wiktionary is stubbed so smoke never depends on the network: canned senses for two words, 404 otherwise.
+  await send('Page.addScriptToEvaluateOnNewDocument', { source: `{
+    const wiki = { esquina: [{ partOfSpeech: 'Noun', definitions: [{ definition: '<a href="/wiki/corner">corner</a>' }] }],
+                   taquero: [{ partOfSpeech: 'Noun', definitions: [{ definition: 'taco vendor' }] }] }
+    const real = window.fetch
+    window.fetch = (url, opts) => {
+      const m = String(url).match(/en\\.wiktionary\\.org\\/api\\/rest_v1\\/page\\/definition\\/(.+)$/)
+      if (!m) return real(url, opts)
+      const es = wiki[decodeURIComponent(m[1])]
+      return Promise.resolve(es ? new Response(JSON.stringify({ es }), { headers: { 'content-type': 'application/json' } }) : new Response('{}', { status: 404 }))
+    }
+  }` })
   await send('Page.navigate', { url: base + '#/' })
 
   const idb = (body) => `(async () => {
@@ -144,6 +156,9 @@ try {
   await step('Wrong guess → check shows the glossary meaning', async () => {
     await evaluate(tapWord('esquina'))
     await waitForText('¿Qué crees que significa?')
+    const wr = await evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent.startsWith('Abrir en WordReference'))?.href`)
+    if (wr !== 'https://www.wordreference.com/es/en/translation.asp?spen=esquina') throw new Error(`WordReference button: ${wr}`)
+    if ((await evaluate('document.body.innerText')).includes('Wiktionary')) throw new Error('Wiktionary shown before the guess')
     await evaluate(typeInto('input[placeholder]', 'street'))
     await evaluate(clickButton('Comprobar'))
     const body = await waitForText('No exactamente')
@@ -152,6 +167,8 @@ try {
     const href = await evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent === 'WordReference')?.href`)
     if (href !== 'https://www.wordreference.com/es/en/translation.asp?spen=esquina') throw new Error(`source link: ${href}`)
     await waitForText('Guardar «corner»')
+    const wikiBody = await waitForText('wiktionary (comunitario)')
+    if (!wikiBody.includes('corner (noun)')) throw new Error('Wiktionary sense not shown')
     await evaluate(clickButton('Cancelar'))
   })
 
@@ -186,6 +203,10 @@ try {
     await waitForText('Guardar cambios')
     const v = await evaluate(`document.querySelector('input[placeholder]').value`)
     if (v !== 'taco seller') throw new Error('meaning not prefilled: ' + v)
+    await waitForText('Toca una para usarla')
+    await evaluate(clickButton('taco vendor'))
+    const picked = await evaluate(`document.querySelector('input[placeholder]').value`)
+    if (picked !== 'taco vendor') throw new Error('Wiktionary sense not picked: ' + picked)
     await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent === 'Cancelar').click()`)
   })
 

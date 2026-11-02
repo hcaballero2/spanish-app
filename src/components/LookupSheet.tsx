@@ -4,6 +4,7 @@ import type { Selection } from './TappableText'
 import { glossFor } from '../lib/glossary'
 import GlossSources from './GlossSources'
 import { meaningMatches } from '../lib/meaning'
+import { wiktionary, wordReferenceUrl, type WikiSense } from '../lib/wiktionary'
 
 interface Props {
   selection: Selection
@@ -20,12 +21,14 @@ type Check = { kind: 'right' | 'wrong' | 'unknown'; gloss?: string } | null
  * Bottom sheet for a tapped word or phrase (PLAN §7.1). For a new card the
  * learner first guesses the meaning from context, then "Comprobar" checks the
  * guess against the pack glossary (or shows the sentence translation when the
- * glossary has no entry) before the card is saved.
+ * glossary has no entry) before the card is saved. After the check, a
+ * Wiktionary suggestion is shown below it, marked as community-written.
  */
 export default function LookupSheet({ selection, existing, onSave, onDelete, onClose }: Props) {
   const [meaning, setMeaning] = useState(existing?.meaning ?? '')
   const [check, setCheck] = useState<Check>(null)
   const [busy, setBusy] = useState(false)
+  const [wiki, setWiki] = useState<WikiSense[] | null>(null)
   const input = useRef<HTMLInputElement>(null)
   const gloss = selection.key.includes(' ') ? undefined : glossFor(selection.key)
 
@@ -35,6 +38,15 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
     const t = window.setTimeout(() => input.current?.focus(), 50)
     return () => window.clearTimeout(t)
   }, [selection, existing])
+
+  useEffect(() => {
+    let live = true
+    setWiki(null)
+    void wiktionary(selection.key).then((s) => live && setWiki(s))
+    return () => {
+      live = false
+    }
+  }, [selection.key])
 
   const save = async (value = meaning) => {
     if (!value.trim()) {
@@ -63,6 +75,8 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
 
   const checking = !existing && !check
   const glossFirst = gloss?.split(' / ')[0] ?? ''
+  // With a checked glossary meaning, Wiktionary is reference only; without one it can fill the field.
+  const canPick = !!existing || check?.kind === 'unknown'
 
   return (
     <div className="fixed inset-0 z-20 flex items-end" onClick={onClose}>
@@ -79,6 +93,14 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line" />
         <p className="text-2xl font-bold">{selection.text}</p>
         <p className="mt-1 text-sm text-muted">{selection.segment.es}</p>
+        <a
+          href={wordReferenceUrl(selection.key)}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-2 inline-block rounded-full border border-line px-3 py-1 text-sm text-accent"
+        >
+          Abrir en WordReference ↗
+        </a>
 
         <label className="mt-4 block">
           <span className="text-xs uppercase tracking-wide text-muted">
@@ -118,6 +140,27 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
           <div className="mt-3 rounded-xl border border-line bg-card p-3 text-sm" role="status">
             <p className="text-muted">No hay definición guardada. Compara con la frase completa:</p>
             <p className="mt-1">{selection.segment.en ?? '—'}</p>
+          </div>
+        )}
+
+        {!checking && wiki && wiki.length > 0 && (
+          <div className="mt-3 rounded-xl border border-dashed border-line p-3 text-sm">
+            <p className="text-xs uppercase tracking-wide text-muted">Wiktionary (comunitario)</p>
+            <ul className="mt-1 space-y-1">
+              {wiki.map((s, i) => (
+                <li key={i}>
+                  {canPick ? (
+                    <button type="button" onClick={() => setMeaning(s.text)} className="text-left underline decoration-line">
+                      {s.text}
+                    </button>
+                  ) : (
+                    s.text
+                  )}{' '}
+                  <span className="text-xs text-muted">({s.pos.toLowerCase()})</span>
+                </li>
+              ))}
+            </ul>
+            {canPick && <p className="mt-1 text-xs text-muted">Toca una para usarla. Revísala: la escribe la comunidad.</p>}
           </div>
         )}
 
