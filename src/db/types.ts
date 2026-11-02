@@ -76,6 +76,10 @@ export interface Item {
   segments?: Segment[]
   questions?: { q: string; options: string[]; answer: number }[]
   audioUrl?: string
+  // listening from a real video clip
+  video?: { youtubeId: string; title: string; channel: string; start: number; end: number; embeddable: boolean }
+  listenFor?: string
+  keyWords?: { es: string; en: string; exampleEs: string; exampleEn: string }[]
   // speaking
   mode?: 'monologue' | 'dialogue' | 'shadow'
   prompt?: string

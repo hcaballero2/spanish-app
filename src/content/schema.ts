@@ -17,6 +17,30 @@ const QuestionSchema = z.strictObject({
   answer: z.number().int().min(0),
 })
 
+/** A word or short phrase worth saving from a clip or article, with my own example sentence. */
+const KeyWordSchema = z.strictObject({
+  es: z.string().min(1),
+  en: z.string().min(1),
+  exampleEs: z.string().min(1),
+  exampleEn: z.string().min(1),
+})
+
+/**
+ * A clip of a real video by Mexican speakers, played from YouTube (never
+ * copied). `embeddable: false` when the channel blocks embedding (oEmbed 401):
+ * the app then opens YouTube at `start`. Check with scripts/check-videos.ts.
+ */
+const VideoSchema = z
+  .strictObject({
+    youtubeId: z.string().regex(/^[\w-]{11}$/, 'YouTube video id'),
+    title: z.string().min(1), // the video's title on YouTube, as oEmbed returns it
+    channel: z.string().min(1),
+    start: z.number().int().min(0), // seconds
+    end: z.number().int().min(1),
+    embeddable: z.boolean(),
+  })
+  .refine((v) => v.end > v.start, 'end must be after start')
+
 const base = {
   id: z.string().regex(/^[a-z0-9-]+$/, 'kebab-case id'),
   level: LevelSchema,
@@ -32,13 +56,24 @@ const ReadingItem = z.strictObject({
   questions: z.array(QuestionSchema).max(5).optional(),
 })
 
-const ListeningItem = z.strictObject({
-  ...base,
-  skill: z.literal('listening'),
-  segments: z.array(SegmentSchema).min(1),
-  questions: z.array(QuestionSchema).max(5).optional(),
-  audioUrl: z.url().optional(),
-})
+/** Either a TTS transcript (`segments`) or a real video clip (`video` + `listenFor` + `keyWords`). */
+const ListeningItem = z
+  .strictObject({
+    ...base,
+    skill: z.literal('listening'),
+    segments: z.array(SegmentSchema).min(1).optional(),
+    questions: z.array(QuestionSchema).max(5).optional(),
+    audioUrl: z.url().optional(),
+    video: VideoSchema.optional(),
+    /** What to pay attention to before pressing play. */
+    listenFor: z.string().min(1).optional(),
+    keyWords: z.array(KeyWordSchema).min(3).max(10).optional(),
+  })
+  .superRefine((item, ctx) => {
+    if (!item.segments === !item.video) ctx.addIssue({ code: 'custom', message: 'listening needs exactly one of segments or video' })
+    if (item.video && (!item.listenFor || !item.keyWords || !item.questions?.length))
+      ctx.addIssue({ code: 'custom', message: 'a video clip needs listenFor, keyWords and questions' })
+  })
 
 const SpeakingItem = z.strictObject({
   ...base,

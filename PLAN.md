@@ -240,6 +240,15 @@ Each screen with content runs a **session timer** (Section 10).
 - **External media item**: fields `audioUrl` + pasted transcript. Captions
   cannot be synced automatically; show the transcript as plain tappable text
   beside an `<audio>` element.
+- **Video clip item** (added 2026-11-01, Hazel: learn the human dialect, not
+  only the TTS voice): `video {youtubeId, title, channel, start, end,
+  embeddable}` + `listenFor` + 3–10 `keyWords {es, en, exampleEs, exampleEn}` +
+  questions. Embeddable clips play in place (youtube-nocookie, start/end);
+  otherwise a button opens YouTube at the start time. Nothing from the video
+  is copied: no transcript, no audio. Questions may be written from YouTube's
+  auto-captions but only ask about clearly spoken content. Pick slow, clear
+  Mexican speakers first. `scripts/check-videos.ts` confirms each video
+  exists, its title/channel match, and `embeddable` is right.
 
 ### 7.4 Speaking
 
@@ -385,7 +394,7 @@ patrias), B1+ (opinión y medio ambiente, historia: la Revolución), and B2
 (política y sociedad, humor y albures, literatura breve such as Juan Rulfo
 fragments, migración).
 
-Each pack contains at minimum: 2 reading, 2 listening, 2 speaking (one
+Each pack contains at minimum: 2 reading, 2 listening (TTS) plus 1–3 video clips, 2 speaking (one
 monologue, one dialogue), 1 writing, 1 grammar, 1 culture note. That is
 roughly 5–7 study days at 45 min/day.
 

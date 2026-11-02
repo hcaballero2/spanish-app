@@ -8,6 +8,7 @@ import Home from './features/home/Home'
 import ThemeView from './features/theme/ThemeView'
 import ReadingScreen from './features/reading/ReadingScreen'
 import ListeningScreen from './features/listening/ListeningScreen'
+import VideoScreen from './features/listening/VideoScreen'
 import SpeakingScreen from './features/speaking/SpeakingScreen'
 import WritingScreen from './features/writing/WritingScreen'
 import ReviewScreen from './features/review/ReviewScreen'
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/theme/:themeId" element={<ThemeView />} />
         <Route path="/read/:itemId" element={<ReadingScreen />} />
         <Route path="/listen/:itemId" element={<ListeningScreen />} />
+        <Route path="/video/:itemId" element={<VideoScreen />} />
         <Route path="/speak/:itemId" element={<SpeakingScreen />} />
         <Route path="/write/:itemId" element={<WritingScreen />} />
         <Route path="/review" element={<ReviewScreen />} />

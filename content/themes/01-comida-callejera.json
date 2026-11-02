@@ -45,23 +45,27 @@
     "atole": "atole / warm corn drink",
     "azul": "blue",
     "barato": "cheap",
+    "bebida": "drink",
     "billete": "bill / banknote",
     "boca": "mouth",
     "bolsas": "bags",
     "buen": "good",
     "buenas": "good",
+    "buenos": "good",
     "cada": "each / every",
     "cajeta": "cajeta / goat's milk caramel",
     "calabaza": "squash / pumpkin",
     "calientitos": "nice and warm / nice and hot",
     "calle": "street",
     "cambio": "change",
+    "camino": "way / road",
     "carne": "meat",
     "caro": "expensive",
     "casa": "house / home",
     "cebolla": "onion",
     "cerca": "near / close",
     "champiñones": "mushrooms",
+    "champiñón": "mushroom",
     "chile": "chili / chili pepper",
     "chocolate": "chocolate",
     "chucho": "Chucho (nickname for Jesús)",
@@ -75,7 +79,9 @@
     "comida": "food / meal / dish",
     "como": "I eat / like / as",
     "compramos": "we buy",
+    "compras": "shopping / purchases",
     "compro": "I buy",
+    "común": "common",
     "con": "with",
     "contesto": "I answer / I reply",
     "corta": "cuts",
@@ -88,16 +94,21 @@
     "de": "of / from",
     "decir": "to say / to mean",
     "del": "of the / from the",
+    "desayunan": "they have breakfast",
+    "desayunar": "to have breakfast",
+    "desayuno": "breakfast",
     "después": "then / after / afterwards",
     "dice": "says",
     "domingo": "Sunday",
     "don": "Mr. / sir (respectful title)",
+    "días": "days",
     "el": "the",
     "elote": "corn on the cob / corn",
     "en": "in / on / at",
     "es": "is / it is",
     "esquina": "corner",
     "esquites": "esquites / Mexican street corn in a cup",
+    "esta": "this",
     "estos": "these",
     "está": "is",
     "favor": "favor / please",
@@ -126,11 +137,13 @@
     "jamaica": "hibiscus",
     "joven": "young man / young person / young",
     "junto": "next to / together",
+    "kilo": "kilo",
     "la": "the / her / it",
     "las": "the / them",
     "le": "to you / to him / to her",
     "les": "to you / to them / you all",
     "limón": "lime / lemon",
+    "lista": "list",
     "llama": "is called / is named",
     "llena": "full",
     "llenas": "full",
@@ -139,10 +152,12 @@
     "los": "the / them",
     "lupita": "Lupita (name)",
     "mamá": "mom / mother",
+    "mango": "mango",
     "mangos": "mangoes / mangos",
     "mano": "hand",
     "masa": "corn dough / dough",
     "mayonesa": "mayonnaise / mayo",
+    "maíz": "corn",
     "mañana": "morning / tomorrow",
     "me": "me / to me / myself",
     "mejores": "best / better",
@@ -150,6 +165,7 @@
     "mi": "my",
     "mis": "my",
     "mucha": "a lot / much",
+    "muchas": "many",
     "mucho": "a lot / much",
     "muchos": "many / a lot of",
     "muy": "very",
@@ -173,9 +189,11 @@
     "pastor": "al pastor / spit-roasted pork",
     "pequeña": "small / little",
     "pero": "but",
+    "personas": "people",
     "pesos": "pesos",
     "pica": "is spicy / it's spicy / stings",
     "picoso": "spicy / hot",
+    "pide": "orders / asks for",
     "pido": "I order / I ask for",
     "pie": "foot / standing",
     "piña": "pineapple",
@@ -194,14 +212,19 @@
     "puesto": "stand / stall",
     "puestos": "stands / stalls",
     "que": "that / which / who",
+    "quesadilla": "quesadilla / folded tortilla with filling",
     "quesadillas": "quesadillas",
     "queso": "cheese",
     "quiere": "wants / do you want",
+    "quiero": "I want",
     "quince": "fifteen",
     "qué": "what",
+    "rajas": "strips (of poblano chile)",
     "regresamos": "we go back / we return",
     "rico": "tasty / delicious / rich",
+    "rodrigo": "Rodrigo",
     "roma": "Roma (name of a neighborhood)",
+    "ruido": "noise",
     "rápido": "fast / quick",
     "salsa": "salsa / sauce",
     "se": "itself / himself / is (passive)",
@@ -212,6 +235,7 @@
     "sin": "without",
     "solo": "just / only / alone",
     "son": "are / they are / it's",
+    "sope": "sope / thick corn base with toppings",
     "soy": "I am / I'm",
     "suadero": "suadero / beef cut from the chest (for tacos)",
     "sí": "yes",
@@ -230,6 +254,8 @@
     "todo": "everything / all",
     "todos": "everyone / all",
     "tomar": "to drink / to take",
+    "torta": "torta / Mexican sandwich",
+    "trabajo": "work / job",
     "tres": "three",
     "trompo": "spit / vertical rotisserie",
     "un": "a / an / one",
@@ -241,6 +267,7 @@
     "vamos": "we go / let's go",
     "vaso": "cup / glass",
     "veinticinco": "twenty-five",
+    "venden": "they sell / do you sell",
     "verde": "green",
     "vez": "time",
     "vivo": "I live",
@@ -260,23 +287,27 @@
     "atole": ["wordreference", "dem"],
     "azul": ["wordreference", "spanishdict"],
     "barato": ["wordreference", "spanishdict"],
+    "bebida": ["wordreference", "spanishdict"],
     "billete": ["wordreference"],
     "boca": ["wordreference", "spanishdict"],
     "bolsas": ["wordreference"],
     "buen": ["wordreference", "spanishdict"],
     "buenas": ["wordreference"],
+    "buenos": ["wordreference", "spanishdict"],
     "cada": ["wordreference", "spanishdict"],
     "cajeta": ["wordreference", "dem"],
     "calabaza": ["wordreference", "spanishdict"],
     "calientitos": ["wordreference", "spanishdict"],
     "calle": ["wordreference", "spanishdict"],
     "cambio": ["wordreference", "spanishdict"],
+    "camino": ["wordreference", "spanishdict"],
     "carne": ["wordreference", "spanishdict"],
     "caro": ["wordreference", "spanishdict"],
     "casa": ["wordreference", "spanishdict"],
     "cebolla": ["wordreference", "spanishdict"],
     "cerca": ["wordreference", "spanishdict"],
     "champiñones": ["wordreference", "spanishdict"],
+    "champiñón": ["wordreference", "spanishdict"],
     "chile": ["wordreference", "spanishdict"],
     "chocolate": ["wordreference", "spanishdict"],
     "chucho": ["name"],
@@ -290,7 +321,9 @@
     "comida": ["wordreference", "spanishdict"],
     "como": ["wordreference", "spanishdict"],
     "compramos": ["wordreference", "spanishdict"],
+    "compras": ["wordreference", "spanishdict"],
     "compro": ["wordreference", "spanishdict"],
+    "común": ["wordreference", "spanishdict"],
     "con": ["wordreference", "spanishdict"],
     "contesto": ["wordreference", "spanishdict"],
     "corta": ["wordreference"],
@@ -303,16 +336,21 @@
     "de": ["wordreference", "spanishdict"],
     "decir": ["wordreference", "spanishdict"],
     "del": ["wordreference", "spanishdict"],
+    "desayunan": ["wordreference", "spanishdict"],
+    "desayunar": ["wordreference", "spanishdict"],
+    "desayuno": ["wordreference", "spanishdict"],
     "después": ["wordreference", "spanishdict"],
     "dice": ["wordreference"],
     "domingo": ["wordreference", "spanishdict"],
     "don": ["wordreference"],
+    "días": ["wordreference", "spanishdict"],
     "el": ["wordreference", "spanishdict"],
     "elote": ["wordreference", "dem"],
     "en": ["wordreference", "spanishdict"],
     "es": ["wordreference", "spanishdict"],
     "esquina": ["wordreference", "spanishdict"],
     "esquites": ["wordreference", "dem"],
+    "esta": ["wordreference", "spanishdict"],
     "estos": ["wordreference", "spanishdict"],
     "está": ["wordreference", "spanishdict"],
     "favor": ["wordreference", "spanishdict"],
@@ -341,11 +379,13 @@
     "jamaica": ["wordreference", "dem"],
     "joven": ["wordreference", "spanishdict"],
     "junto": ["wordreference", "spanishdict"],
+    "kilo": ["wordreference", "spanishdict"],
     "la": ["wordreference", "spanishdict"],
     "las": ["wordreference", "spanishdict"],
     "le": ["wordreference", "spanishdict"],
     "les": ["wordreference", "spanishdict"],
     "limón": ["wordreference", "spanishdict"],
+    "lista": ["wordreference", "spanishdict"],
     "llama": ["wordreference"],
     "llena": ["wordreference", "spanishdict"],
     "llenas": ["wordreference"],
@@ -354,10 +394,12 @@
     "los": ["wordreference", "spanishdict"],
     "lupita": ["name"],
     "mamá": ["wordreference", "spanishdict"],
+    "mango": ["wordreference", "spanishdict"],
     "mangos": ["wordreference", "spanishdict"],
     "mano": ["wordreference", "spanishdict"],
     "masa": ["wordreference"],
     "mayonesa": ["wordreference", "spanishdict"],
+    "maíz": ["wordreference", "spanishdict"],
     "mañana": ["wordreference", "spanishdict"],
     "me": ["wordreference", "spanishdict"],
     "mejores": ["wordreference", "spanishdict"],
@@ -365,6 +407,7 @@
     "mi": ["wordreference", "spanishdict"],
     "mis": ["wordreference", "spanishdict"],
     "mucha": ["wordreference"],
+    "muchas": ["wordreference"],
     "mucho": ["wordreference"],
     "muchos": ["wordreference", "spanishdict"],
     "muy": ["wordreference", "spanishdict"],
@@ -388,9 +431,11 @@
     "pastor": ["wordreference"],
     "pequeña": ["wordreference", "spanishdict"],
     "pero": ["wordreference", "spanishdict"],
+    "personas": ["spanishdict"],
     "pesos": ["wordreference"],
     "pica": ["wordreference", "dem"],
     "picoso": ["wordreference", "spanishdict", "dem"],
+    "pide": ["wordreference", "spanishdict"],
     "pido": ["wordreference", "spanishdict"],
     "pie": ["wordreference", "spanishdict"],
     "piña": ["wordreference", "spanishdict"],
@@ -409,14 +454,19 @@
     "puesto": ["wordreference"],
     "puestos": ["wordreference"],
     "que": ["wordreference", "spanishdict"],
+    "quesadilla": ["wordreference", "spanishdict"],
     "quesadillas": ["wordreference", "spanishdict", "dem"],
     "queso": ["wordreference", "spanishdict"],
     "quiere": ["wordreference", "spanishdict"],
+    "quiero": ["wordreference", "spanishdict"],
     "quince": ["wordreference", "spanishdict"],
     "qué": ["wordreference", "spanishdict"],
+    "rajas": ["dem"],
     "regresamos": ["wordreference", "spanishdict"],
     "rico": ["wordreference", "spanishdict"],
+    "rodrigo": ["name"],
     "roma": ["name"],
+    "ruido": ["wordreference", "spanishdict"],
     "rápido": ["wordreference", "spanishdict"],
     "salsa": ["wordreference", "spanishdict"],
     "se": ["wordreference"],
@@ -427,6 +477,7 @@
     "sin": ["wordreference", "spanishdict"],
     "solo": ["wordreference", "spanishdict"],
     "son": ["wordreference", "spanishdict"],
+    "sope": ["dem"],
     "soy": ["wordreference", "spanishdict"],
     "suadero": ["dem"],
     "sí": ["wordreference", "spanishdict"],
@@ -445,6 +496,8 @@
     "todo": ["wordreference", "spanishdict"],
     "todos": ["wordreference", "spanishdict"],
     "tomar": ["wordreference", "spanishdict"],
+    "torta": ["wordreference", "dem"],
+    "trabajo": ["wordreference", "spanishdict"],
     "tres": ["wordreference", "spanishdict"],
     "trompo": ["wordreference"],
     "un": ["wordreference", "spanishdict"],
@@ -456,6 +509,7 @@
     "vamos": ["wordreference", "spanishdict"],
     "vaso": ["wordreference", "spanishdict"],
     "veinticinco": ["wordreference", "spanishdict"],
+    "venden": ["wordreference", "spanishdict"],
     "verde": ["wordreference", "spanishdict"],
     "vez": ["wordreference", "spanishdict"],
     "vivo": ["wordreference", "spanishdict"],
@@ -905,6 +959,270 @@
             "Tacos de suadero",
             "Tamales",
             "Churros"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "cc-video-pedir",
+      "skill": "listening",
+      "level": "A2",
+      "title": "Video: pedir en un puesto",
+      "estimatedMinutes": 8,
+      "video": {
+        "title": "How to Order Mexican Street Food (in Slow Spanish) | Super Easy Spanish 48",
+        "channel": "Easy Spanish",
+        "youtubeId": "6CwX_8xM8eE",
+        "embeddable": true,
+        "start": 0,
+        "end": 86
+      },
+      "listenFor": "Es tarde y ella no ha desayunado. Escucha qué vende el puesto, qué piden ella y Rodrigo, y cómo contesta la señora: «Sí, señora, ahorita».",
+      "keyWords": [
+        {
+          "es": "¿Qué venden?",
+          "en": "What do you sell?",
+          "exampleEs": "Buenos días, ¿qué venden?",
+          "exampleEn": "Good morning, what do you sell?"
+        },
+        {
+          "es": "para mí",
+          "en": "for me",
+          "exampleEs": "Para mí, un tlacoyo, por favor.",
+          "exampleEn": "For me, a tlacoyo, please."
+        },
+        {
+          "es": "tlacoyo",
+          "en": "thick oval stuffed corn cake",
+          "exampleEs": "Mi mamá prefiere un tlacoyo con queso.",
+          "exampleEn": "My mom prefers a tlacoyo with cheese."
+        },
+        {
+          "es": "champiñón",
+          "en": "mushroom",
+          "exampleEs": "Quiero una quesadilla de champiñón.",
+          "exampleEn": "I want a mushroom quesadilla."
+        },
+        {
+          "es": "sope",
+          "en": "sope (thick corn base with toppings)",
+          "exampleEs": "Rodrigo pide un sope.",
+          "exampleEn": "Rodrigo orders a sope."
+        },
+        {
+          "es": "ahorita",
+          "en": "right now / in a moment",
+          "exampleEs": "Sí, señora, ahorita.",
+          "exampleEn": "Yes, ma'am, right away."
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Por qué van a los puestos?",
+          "options": [
+            "Porque no ha desayunado y tiene hambre",
+            "Porque trabaja en un puesto",
+            "Porque busca un regalo"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "¿Qué pide ella?",
+          "options": [
+            "Una gordita de chicharrón",
+            "Un tlacoyo de haba con champiñón",
+            "Un taco de bistec"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Qué pide Rodrigo?",
+          "options": [
+            "Un tlacoyo de frijol",
+            "Una quesadilla de papa",
+            "Un sope de tinga de res"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "La señora dice «ahorita se lo preparamos». ¿Qué significa aquí?",
+          "options": [
+            "Se lo preparan en un momento",
+            "Se lo preparan mañana",
+            "No se lo pueden preparar"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "cc-video-desayuno",
+      "skill": "listening",
+      "level": "A2",
+      "title": "Video: torta de tamal y atole",
+      "estimatedMinutes": 6,
+      "video": {
+        "title": "How to Order Mexican Street Food (in Slow Spanish) | Super Easy Spanish 48",
+        "channel": "Easy Spanish",
+        "youtubeId": "6CwX_8xM8eE",
+        "embeddable": true,
+        "start": 152,
+        "end": 192
+      },
+      "listenFor": "Escucha cuándo desayunan muchas personas en la Ciudad de México, qué comen y qué beben.",
+      "keyWords": [
+        {
+          "es": "desayunar",
+          "en": "to have breakfast",
+          "exampleEs": "Muchas personas desayunan en la calle.",
+          "exampleEn": "Many people have breakfast in the street."
+        },
+        {
+          "es": "de camino al trabajo",
+          "en": "on the way to work",
+          "exampleEs": "Compro un tamal de camino al trabajo.",
+          "exampleEn": "I buy a tamal on the way to work."
+        },
+        {
+          "es": "torta de tamal",
+          "en": "tamal in a bread roll",
+          "exampleEs": "Una torta de tamal es un desayuno común.",
+          "exampleEn": "A torta de tamal is a common breakfast."
+        },
+        {
+          "es": "rajas",
+          "en": "strips of poblano chile",
+          "exampleEs": "Yo pido un tamal de rajas.",
+          "exampleEn": "I order a tamal with poblano chile strips."
+        },
+        {
+          "es": "atole",
+          "en": "atole / warm corn drink",
+          "exampleEs": "El atole es una bebida de maíz.",
+          "exampleEn": "Atole is a corn drink."
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Cuándo desayunan muchas personas en la Ciudad de México?",
+          "options": [
+            "De camino al trabajo",
+            "En la noche",
+            "Solo los domingos"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "¿Qué es un desayuno común?",
+          "options": [
+            "Unos esquites",
+            "Una torta de tamal",
+            "Unos tacos al pastor"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Por qué su tamal de rajas no es vegetariano?",
+          "options": [
+            "Porque tiene pollo",
+            "Porque tiene queso",
+            "Porque los tamales se hacen con manteca de cerdo"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "¿De qué sabor es su atole?",
+          "options": [
+            "De arroz",
+            "De chocolate",
+            "De fresa"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "cc-video-mercado",
+      "skill": "listening",
+      "level": "A2",
+      "title": "Video: fruta en el mercado",
+      "estimatedMinutes": 8,
+      "video": {
+        "title": "Shopping at a Mexican market with Michelle - Beginner Spanish",
+        "channel": "Dreaming Spanish",
+        "youtubeId": "Ldf8BmDoEys",
+        "embeddable": false,
+        "start": 12,
+        "end": 182
+      },
+      "listenFor": "Michelle compra fruta con 300 pesos. Escucha cómo pregunta el precio («¿A cuánto está…?») y cómo pide («Me da un kilo»).",
+      "keyWords": [
+        {
+          "es": "¿A cuánto está?",
+          "en": "How much is it? (price per kilo)",
+          "exampleEs": "¿A cuánto está el mango?",
+          "exampleEn": "How much is the mango?"
+        },
+        {
+          "es": "me da",
+          "en": "can I have / give me",
+          "exampleEs": "Me da un kilo de mango, por favor.",
+          "exampleEn": "A kilo of mango, please."
+        },
+        {
+          "es": "kilo",
+          "en": "kilo",
+          "exampleEs": "Me da un kilo de plátanos.",
+          "exampleEn": "A kilo of bananas, please."
+        },
+        {
+          "es": "ruido",
+          "en": "noise",
+          "exampleEs": "En el mercado hay mucho ruido.",
+          "exampleEn": "There is a lot of noise at the market."
+        },
+        {
+          "es": "lista de compras",
+          "en": "shopping list",
+          "exampleEs": "Esta es mi lista de compras.",
+          "exampleEn": "This is my shopping list."
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Cuánto dinero va a usar Michelle?",
+          "options": [
+            "300 pesos",
+            "100 pesos",
+            "30 dólares"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "¿Por qué usa el micrófono cerca?",
+          "options": [
+            "Porque está enferma",
+            "Porque en el mercado hay mucho ruido",
+            "Porque habla muy rápido"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "¿Cómo le gusta el plátano?",
+          "options": [
+            "Muy amarillo",
+            "Frito",
+            "Verde"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "¿Qué dice para preguntar el precio?",
+          "options": [
+            "¿A cuánto está?",
+            "¿Qué hora es?",
+            "¿Dónde está?"
           ],
           "answer": 0
         }

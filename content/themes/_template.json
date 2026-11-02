@@ -47,6 +47,28 @@
       "segments": [{ "id": "l1-1", "es": "Oración en español.", "en": "Sentence in English." }]
     },
     {
+      "id": "template-video-1",
+      "skill": "listening",
+      "level": "A2",
+      "title": "Video: title",
+      "estimatedMinutes": 8,
+      "video": {
+        "youtubeId": "11-char-id",
+        "title": "Exact YouTube title (scripts/check-videos.ts checks it)",
+        "channel": "Exact channel name",
+        "start": 0,
+        "end": 90,
+        "embeddable": true
+      },
+      "listenFor": "Qué escuchar, en español fácil.",
+      "keyWords": [
+        { "es": "palabra", "en": "word", "exampleEs": "Ejemplo propio.", "exampleEn": "My own example." },
+        { "es": "palabra", "en": "word", "exampleEs": "Ejemplo propio.", "exampleEn": "My own example." },
+        { "es": "palabra", "en": "word", "exampleEs": "Ejemplo propio.", "exampleEn": "My own example." }
+      ],
+      "questions": [{ "q": "¿...?", "options": ["a", "b", "c"], "answer": 0 }]
+    },
+    {
       "id": "template-speaking-monologue",
       "skill": "speaking",
       "level": "A2",

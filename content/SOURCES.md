@@ -44,6 +44,11 @@ podcasts. All name the same four or five resources below.
 
 - **01 Comida callejera (A2):** Easy Spanish (Mexico City food-street episodes),
   Dreaming Spanish Beginner food videos, Butterfly Spanish food vocabulary.
+  - Video clips in the app (2026-11-01): Easy Spanish «How to Order Mexican
+    Street Food (in Slow Spanish) | Super Easy Spanish 48» (0:00–1:26 ordering,
+    2:32–3:12 breakfast) and Dreaming Spanish «Shopping at a Mexican market with
+    Michelle - Beginner Spanish» (0:12–3:02). Butterfly Spanish's food video was
+    not used: it is mostly explained in English.
 
 ## Word meanings (glossary)
 

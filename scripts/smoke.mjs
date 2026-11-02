@@ -116,7 +116,7 @@ try {
 
   await step('Home renders active theme', async () => {
     await waitForText('Comida callejera')
-    await waitForText('0 de 9 terminados')
+    await waitForText('0 de 12 terminados')
   })
 
   await step('Theme view lists items grouped by skill', async () => {
@@ -194,9 +194,9 @@ try {
     await waitForText("It's eight at night")
   })
 
-  await step('Mark done → theme shows 1 de 9', async () => {
+  await step('Mark done → theme shows 1 de 12', async () => {
     await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.includes('Marcar como terminado')).click()`)
-    await waitForText('1 de 9 terminados')
+    await waitForText('1 de 12 terminados')
   })
 
   await step('Home shows 1 due card and a review button', async () => {
@@ -335,6 +335,31 @@ try {
       if (!(await evaluate(`!!document.querySelector('button[aria-label="${label}"]')`))) throw new Error('missing ' + label)
     }
     await waitForText('Escuchar y repetir')
+  })
+
+  await step('Video clip: embedded player, key word saved, questions answerable', async () => {
+    await evaluate(`location.hash = '#/theme/comida-callejera'`)
+    await waitForText('Video: pedir en un puesto')
+    if (!(await evaluate(`!!document.querySelector('a[href*="/video/cc-video-pedir"]')`))) throw new Error('theme view has no /video/ link')
+    await evaluate(`location.hash = '#/video/cc-video-pedir'`)
+    await waitForText('Escucha para')
+    const src = await evaluate(`document.querySelector('iframe')?.getAttribute('src')`)
+    if (src !== 'https://www.youtube-nocookie.com/embed/6CwX_8xM8eE?start=0&end=86&playsinline=1&rel=0&hl=es') throw new Error('iframe src: ' + src)
+    await evaluate(`document.querySelector('button[aria-label="Guardar champiñón"]').click()`)
+    await waitForText('Tarjeta guardada')
+    if (!(await evaluate(`document.querySelector('button[aria-label="Guardar champiñón"]').disabled`))) throw new Error('key word not marked saved')
+    const card = await evaluate(idb(`const c = (await all('cards')).find(c => c.word === 'champiñón'); return c && [c.meaning, c.exampleEs]`))
+    if (JSON.stringify(card) !== '["mushroom","Quiero una quesadilla de champiñón."]') throw new Error('saved card: ' + JSON.stringify(card))
+    await evaluate(clickButton('Un tlacoyo de haba con champiñón'))
+    if (!(await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent === 'Un tlacoyo de haba con champiñón').className.includes('bg-ok-soft')`))) throw new Error('answer not graded')
+  })
+
+  await step('Video clip from a channel that blocks embeds opens YouTube at the start time', async () => {
+    await evaluate(`location.hash = '#/video/cc-video-mercado'`)
+    await waitForText('Ver en YouTube desde el 0:12')
+    if (await evaluate(`!!document.querySelector('iframe')`)) throw new Error('iframe shown for a non-embeddable video')
+    const href = await evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent.includes('Ver en YouTube')).href`)
+    if (href !== 'https://www.youtube.com/watch?v=Ldf8BmDoEys&t=12s') throw new Error('watch link: ' + href)
   })
 
   await step('Timer runs on a study screen and stores a reading session', async () => {

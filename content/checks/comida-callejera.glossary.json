@@ -411,6 +411,42 @@
    }
   },
   {
+   "word": "bebida",
+   "meaning": "drink",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "bebida",
+    "translations": [
+     "drink",
+     "beverage",
+     "drinking",
+     "drunk",
+     "drink away",
+     "blew it on booze",
+     "drink from",
+     "carbonated beverage, carbonated drink",
+     "fizzy drink",
+     "soda",
+     "energy drink",
+     "power drink",
+     "drink in glass with frosted rim",
+     "carbonated beverage",
+     "soda pop, soda, pop",
+     "milk drink, milk-based drink"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "bebida",
+    "translations": [
+     "drink"
+    ]
+   }
+  },
+  {
    "word": "billete",
    "meaning": "bill / banknote",
    "verdict": "confirmed",
@@ -627,6 +663,51 @@
    }
   },
   {
+   "word": "buenos",
+   "meaning": "good",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "bueno,",
+    "translations": [
+     "good",
+     "useful, practical",
+     "good at",
+     "excel in",
+     "tasty",
+     "hot",
+     "well",
+     "okay, OK, fine, sure",
+     "all right",
+     "alright",
+     "Hello?",
+     "well, so",
+     "Enough already!",
+     "Cut it out!",
+     "goody",
+     "good guy",
+     "cheap and cheerful",
+     "good, attractive, and affordable",
+     "good for the pocketbook",
+     "easy on the wallet",
+     "good-for-nothing",
+     "approve",
+     "give the go-ahead",
+     "give",
+     "good intent"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "bueno",
+    "translations": [
+     "good"
+    ]
+   }
+  },
+  {
    "word": "cada",
    "meaning": "each / every",
    "verdict": "confirmed",
@@ -836,6 +917,51 @@
    }
   },
   {
+   "word": "camino",
+   "meaning": "way / road",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "camino",
+    "translations": [
+     "road",
+     "path",
+     "journey, trip",
+     "way, path",
+     "walk",
+     "go walking",
+     "run",
+     "halfway, halfway there",
+     "on the way",
+     "pave the way",
+     "clear a path, cut a path",
+     "make your way through",
+     "make way, pave the way",
+     "make your way, pave your own path",
+     "break into",
+     "stop along the way, stop on the road",
+     "pit stop",
+     "still a long way to go",
+     "still a long way off",
+     "vehicular road",
+     "right way",
+     "right track, right path",
+     "on the way to, on your way to",
+     "toward, towards",
+     "dirt track"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "camino",
+    "translations": [
+     "road"
+    ]
+   }
+  },
+  {
    "word": "carne",
    "meaning": "meat",
    "verdict": "confirmed",
@@ -1038,6 +1164,28 @@
   {
    "word": "champiñones",
    "meaning": "mushrooms",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "champiñón",
+    "translations": [
+     "mushroom",
+     "champignon mushroom, button mushroom, white mushroom, common mushroom"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "champiñón",
+    "translations": [
+     "mushroom"
+    ]
+   }
+  },
+  {
+   "word": "champiñón",
+   "meaning": "mushroom",
    "verdict": "confirmed",
    "ok": {
     "wordreference": true,
@@ -1555,6 +1703,48 @@
    }
   },
   {
+   "word": "compras",
+   "meaning": "shopping / purchases",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "comprar",
+    "translations": [
+     "buy",
+     "purchase",
+     "buy off",
+     "bribe",
+     "figure",
+     "purchases",
+     "groceries",
+     "purchase, buy, purchasing, buying",
+     "buy at a good price",
+     "get a good deal",
+     "get a deal on",
+     "get",
+     "pay a lot for",
+     "pay an arm and a leg",
+     "buy the paper, buy the newspaper",
+     "shop for fun",
+     "buy just for the sake of buying",
+     "purchase services, buy services",
+     "shoot yourself in the foot",
+     "put your head in a noose",
+     "buy a woman's love",
+     "buy votes"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "compras",
+    "translations": [
+     "shopping"
+    ]
+   }
+  },
+  {
    "word": "compro",
    "meaning": "I buy",
    "verdict": "confirmed",
@@ -1590,6 +1780,51 @@
     "lemma": "comprar",
     "translations": [
      "to buy"
+    ]
+   }
+  },
+  {
+   "word": "común",
+   "meaning": "common",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "común",
+    "translations": [
+     "common, usual",
+     "normal, ordinary",
+     "common practice",
+     "common, shared",
+     "communal",
+     "joint",
+     "majority",
+     "common stock",
+     "common share",
+     "proceedings for the division of property",
+     "proceedings for the dividing of property",
+     "common agenda, mutual agenda",
+     "mutual friend",
+     "friend in common",
+     "before the common era",
+     "average citizen",
+     "ordinary citizen",
+     "run-of-the-mill, everyday",
+     "ordinary, average",
+     "run-of-the-mill",
+     "bog standard",
+     "by mutual agreement, of mutual agreement",
+     "of the common era, from the common era",
+     "common crime, common offense",
+     "common denominator"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "común",
+    "translations": [
+     "common"
     ]
    }
   },
@@ -2092,6 +2327,91 @@
    }
   },
   {
+   "word": "desayunan",
+   "meaning": "they have breakfast",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "desayunar",
+    "translations": [
+     "eat breakfast, have breakfast",
+     "breakfast",
+     "have for breakfast",
+     "find out",
+     "hear about",
+     "get wind of",
+     "eat a good breakfast, have a good breakfast",
+     "eat a big breakfast, have a big breakfast",
+     "eat a hearty breakfast, have a hearty breakfast"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "desayunar",
+    "translations": [
+     "to have breakfast"
+    ]
+   }
+  },
+  {
+   "word": "desayunar",
+   "meaning": "to have breakfast",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "desayunar",
+    "translations": [
+     "eat breakfast, have breakfast",
+     "breakfast",
+     "have for breakfast",
+     "find out",
+     "hear about",
+     "get wind of",
+     "eat a good breakfast, have a good breakfast",
+     "eat a big breakfast, have a big breakfast",
+     "eat a hearty breakfast, have a hearty breakfast"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "desayunar",
+    "translations": [
+     "to have breakfast"
+    ]
+   }
+  },
+  {
+   "word": "desayuno",
+   "meaning": "breakfast",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "desayuno",
+    "translations": [
+     "breakfast",
+     "eat breakfast, have breakfast",
+     "have for breakfast",
+     "find out",
+     "hear about",
+     "get wind of",
+     "have breakfast"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "desayuno",
+    "translations": [
+     "breakfast"
+    ]
+   }
+  },
+  {
    "word": "después",
    "meaning": "then / after / afterwards",
    "verdict": "confirmed",
@@ -2255,6 +2575,51 @@
     "lemma": "don",
     "translations": [
      "gift"
+    ]
+   }
+  },
+  {
+   "word": "días",
+   "meaning": "days",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "día",
+    "translations": [
+     "day",
+     "daytime",
+     "daylight",
+     "days",
+     "birthday",
+     "saint's day",
+     "special day",
+     "big day",
+     "as of today",
+     "up until now",
+     "in broad daylight",
+     "up to date",
+     "current",
+     "today",
+     "these days, up to the present day",
+     "the next day, the following day",
+     "someday",
+     "one day",
+     "one of these days",
+     "make your day, brighten your day",
+     "learn",
+     "here I am again",
+     "even today",
+     "even now",
+     "good day"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "día",
+    "translations": [
+     "day"
     ]
    }
   },
@@ -2467,6 +2832,51 @@
     "lemma": "esquitar",
     "translations": [
      "to forgive"
+    ]
+   }
+  },
+  {
+   "word": "esta",
+   "meaning": "this",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "estar",
+    "translations": [
+     "be",
+     "find yourself",
+     "be [+ gerund]",
+     "work as",
+     "lie in",
+     "be in",
+     "consist of",
+     "cost",
+     "stand at",
+     "support",
+     "be in favor of",
+     "be in favour of",
+     "stay",
+     "be [+ adj]",
+     "be about to do",
+     "be in love with",
+     "be yet to",
+     "have half a mind to do",
+     "feel like doing",
+     "fancy doing",
+     "be in the mood for",
+     "be up for",
+     "this",
+     "this, this one",
+     "the latter, the last"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "esta",
+    "translations": [
+     "this"
     ]
    }
   },
@@ -3550,6 +3960,30 @@
    }
   },
   {
+   "word": "kilo",
+   "meaning": "kilo",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "kilo",
+    "translations": [
+     "kilo",
+     "loads, tons",
+     "heaps",
+     "kilo-"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "kilo",
+    "translations": [
+     "kilo"
+    ]
+   }
+  },
+  {
    "word": "la",
    "meaning": "the / her / it",
    "verdict": "confirmed",
@@ -3744,6 +4178,51 @@
     "lemma": "limón",
     "translations": [
      "lemon"
+    ]
+   }
+  },
+  {
+   "word": "lista",
+   "meaning": "list",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "lista",
+    "translations": [
+     "list",
+     "strip, stripe, band",
+     "ready",
+     "ready to do",
+     "bright, clever, smart",
+     "smart",
+     "cunning, crafty",
+     "smart arse",
+     "smart a**",
+     "fox",
+     "Done!",
+     "Ready!",
+     "inventory",
+     "be a know it all, be clever",
+     "be a smart a**",
+     "think that you're all that and a bag of chips",
+     "wedding list",
+     "checklist",
+     "wish list",
+     "bucket list",
+     "waiting list",
+     "wait list",
+     "price list",
+     "electoral list, electoral roll",
+     "blacklist"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "lista",
+    "translations": [
+     "list"
     ]
    }
   },
@@ -4057,6 +4536,45 @@
    }
   },
   {
+   "word": "mango",
+   "meaning": "mango",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "mango",
+    "translations": [
+     "handle",
+     "mango",
+     "ticker",
+     "heart",
+     "hunk",
+     "peso",
+     "dough, loot",
+     "pinch",
+     "nick",
+     "flat out",
+     "uproar, hullabaloo",
+     "think oneself to be, believe oneself, believe oneself to be",
+     "the bee's knees",
+     "the dog's bollocks",
+     "the be-all and end-all",
+     "have the upper hand, have the advantage",
+     "call the shots",
+     "crack the whip"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "mango",
+    "translations": [
+     "mango",
+     "handle"
+    ]
+   }
+  },
+  {
    "word": "mangos",
    "meaning": "mangoes / mangos",
    "verdict": "confirmed",
@@ -4201,6 +4719,29 @@
     "lemma": "mayonesa",
     "translations": [
      "mayonnaise"
+    ]
+   }
+  },
+  {
+   "word": "maíz",
+   "meaning": "corn",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "maíz",
+    "translations": [
+     "corn, maize",
+     "corn",
+     "corn bread"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "maíz",
+    "translations": [
+     "corn"
     ]
    }
   },
@@ -4471,6 +5012,51 @@
   {
    "word": "mucha",
    "meaning": "a lot / much",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": false
+   },
+   "wordreference": {
+    "lemma": "mucho",
+    "translations": [
+     "many",
+     "much",
+     "a lot, a lot of",
+     "lots of",
+     "a lot of",
+     "very much",
+     "a lot",
+     "lots",
+     "big time",
+     "a long time",
+     "ages",
+     "at the most, at most",
+     "tops, max",
+     "be very scared",
+     "there's still a lot to do",
+     "there's still much to do",
+     "with great skill, with aplomb",
+     "skillfully",
+     "stylishly",
+     "elegantly",
+     "my pleasure, not at all",
+     "regretfully, with regret, with great regret",
+     "sorrowfully, sadly",
+     "with a lot of sacrifice, with much sacrifice",
+     "with a lot of effort"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "mucho",
+    "translations": [
+     "a lot of"
+    ]
+   }
+  },
+  {
+   "word": "muchas",
+   "meaning": "many",
    "verdict": "confirmed",
    "ok": {
     "wordreference": true,
@@ -5369,6 +5955,45 @@
    }
   },
   {
+   "word": "personas",
+   "meaning": "people",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": false,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "persona",
+    "translations": [
+     "person",
+     "in personam lawsuit, lawsuit in personam",
+     "actio in personam",
+     "in personam action, action in personam",
+     "stun a person",
+     "leave a person stunned",
+     "crush a person",
+     "grow as a person",
+     "mature",
+     "in person",
+     "personally",
+     "first-hand",
+     "directly",
+     "colored person, person of color",
+     "black person",
+     "natural person",
+     "legal entity",
+     "persona non grata",
+     "third person"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "personas",
+    "translations": [
+     "people"
+    ]
+   }
+  },
+  {
    "word": "pesos",
    "meaning": "pesos",
    "verdict": "confirmed",
@@ -5477,6 +6102,52 @@
     "lemma": "picoso",
     "translations": [
      "spicy"
+    ]
+   }
+  },
+  {
+   "word": "pide",
+   "meaning": "orders / asks for",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "pedir",
+    "translations": [
+     "ask for",
+     "request",
+     "order",
+     "demand",
+     "expect",
+     "ask",
+     "need",
+     "cry out for",
+     "swimmingly, perfectly",
+     "without a hitch",
+     "couldn't be better, couldn't ask for better",
+     "be crying out for",
+     "be shouting at the top of your lungs for",
+     "plead for, beg for, clamour for",
+     "plead for, beg for, clamor for",
+     "seek advice from",
+     "apologise",
+     "apologize",
+     "ask for forgiveness",
+     "say sorry",
+     "make an appointment",
+     "call for justice",
+     "seek justice",
+     "seek favour with the law",
+     "ask for the impossible"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "pedir",
+    "translations": [
+     "to ask for",
+     "to order"
     ]
    }
   },
@@ -6147,6 +6818,28 @@
    }
   },
   {
+   "word": "quesadilla",
+   "meaning": "quesadilla / folded tortilla with filling",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "quesadilla",
+    "translations": [
+     "cheesecake",
+     "quesadilla"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "quesadilla",
+    "translations": [
+     "quesadilla"
+    ]
+   }
+  },
+  {
    "word": "quesadillas",
    "meaning": "quesadillas",
    "verdict": "confirmed",
@@ -6216,6 +6909,51 @@
   {
    "word": "quiere",
    "meaning": "wants / do you want",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "querer",
+    "translations": [
+     "want",
+     "want to do",
+     "love",
+     "like",
+     "accept",
+     "for wanting I am who I am",
+     "let yourself be loved, let",
+     "let yourself be spoilt, let",
+     "not want any more",
+     "have had enough",
+     "be fed up of",
+     "have had it up to here with",
+     "mean",
+     "try to say",
+     "want to say",
+     "where there's a will there's a way",
+     "look for a fight, look for trouble",
+     "be a war monger",
+     "be on the prowl",
+     "be on the pull",
+     "want more",
+     "accidentally",
+     "unintentionally",
+     "it's all about wanting to learn"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "querer",
+    "translations": [
+     "to want",
+     "to love"
+    ]
+   }
+  },
+  {
+   "word": "quiero",
+   "meaning": "I want",
    "verdict": "confirmed",
    "ok": {
     "wordreference": true,
@@ -6332,6 +7070,51 @@
    }
   },
   {
+   "word": "rajas",
+   "meaning": "strips (of poblano chile)",
+   "verdict": "review",
+   "ok": {
+    "wordreference": false,
+    "spanishdict": false
+   },
+   "wordreference": {
+    "lemma": "rajar",
+    "translations": [
+     "rip",
+     "slice",
+     "cut",
+     "split",
+     "come apart",
+     "back out",
+     "get cold feet",
+     "badmouth",
+     "criticize",
+     "criticise",
+     "slag off",
+     "stab",
+     "slash",
+     "knife",
+     "gash, cut",
+     "slit",
+     "vent",
+     "crack, butt crack, butt cleavage, a** crack",
+     "crack, arse crack, bum crack, arse cleavage",
+     "builder's crack",
+     "piece, chunk",
+     "kindling",
+     "rajah",
+     "pell-mell",
+     "in a hurry, in a rush"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "rajas",
+    "translations": [
+     "chili strips"
+    ]
+   }
+  },
+  {
    "word": "regresamos",
    "meaning": "we go back / we return",
    "verdict": "confirmed",
@@ -6399,6 +7182,24 @@
    }
   },
   {
+   "word": "rodrigo",
+   "meaning": "Rodrigo",
+   "verdict": "review",
+   "ok": {
+    "wordreference": false,
+    "spanishdict": false
+   },
+   "wordreference": {
+    "translations": []
+   },
+   "spanishdict": {
+    "lemma": "Rodrigo",
+    "translations": [
+     "Roderick"
+    ]
+   }
+  },
+  {
    "word": "roma",
    "meaning": "Roma (name of a neighborhood)",
    "verdict": "review",
@@ -6421,6 +7222,46 @@
     "lemma": "romo",
     "translations": [
      "blunt"
+    ]
+   }
+  },
+  {
+   "word": "ruido",
+   "meaning": "noise",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "ruido",
+    "translations": [
+     "noise",
+     "commotion",
+     "uproar",
+     "fuss",
+     "noise, sound",
+     "interference",
+     "make noise",
+     "make a noise",
+     "be noisy",
+     "make noise, cause a stir",
+     "make you wonder",
+     "not fit, not make sense",
+     "grab your attention",
+     "have",
+     "be bothered by the noise of",
+     "full of sound and fury",
+     "full of hot air",
+     "all talk",
+     "all fur coat and no knickers",
+     "background noise"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "ruido",
+    "translations": [
+     "noise"
     ]
    }
   },
@@ -6845,6 +7686,29 @@
     "lemma": "son",
     "translations": [
      "sound"
+    ]
+   }
+  },
+  {
+   "word": "sope",
+   "meaning": "sope / thick corn base with toppings",
+   "verdict": "review",
+   "ok": {
+    "wordreference": false,
+    "spanishdict": false
+   },
+   "wordreference": {
+    "lemma": "sopar,",
+    "translations": [
+     "dip",
+     "dunk"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "sope",
+    "translations": [
+     "fried corn dough topped with beans, cream, lettuce, and cheese",
+     "dumb"
     ]
    }
   },
@@ -7485,6 +8349,91 @@
    }
   },
   {
+   "word": "torta",
+   "meaning": "torta / Mexican sandwich",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": false
+   },
+   "wordreference": {
+    "lemma": "torta",
+    "translations": [
+     "cake",
+     "tart",
+     "flapjack",
+     "sandwich",
+     "thick ear",
+     "slap, thump",
+     "bash",
+     "blow, punch",
+     "go to a wedding",
+     "not be able to make heads or tails of what's being said",
+     "not understand a word",
+     "at all, not a bit, not in the slightest",
+     "end up empty handed",
+     "pork sandwich with spicy au jus",
+     "beef sandwich",
+     "corn bread",
+     "hash brown",
+     "potato pancake",
+     "puffed pastry"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "torta",
+    "translations": [
+     "cake"
+    ]
+   }
+  },
+  {
+   "word": "trabajo",
+   "meaning": "work / job",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "trabajo",
+    "translations": [
+     "work",
+     "job",
+     "labour",
+     "labor",
+     "assignment",
+     "coursework",
+     "homework",
+     "work with",
+     "work for, strive for",
+     "work on",
+     "job abandonment",
+     "unjustified absence",
+     "walkout",
+     "work accident, work-related accident",
+     "occupational accident",
+     "get a head start on work",
+     "get a jump on work",
+     "get ahead on work",
+     "temporary work agency",
+     "temp agency",
+     "contribute work",
+     "work area",
+     "area of expertise",
+     "work space, workspace",
+     "work area, working area"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "trabajo",
+    "translations": [
+     "work",
+     "job"
+    ]
+   }
+  },
+  {
    "word": "tres",
    "meaning": "three",
    "verdict": "confirmed",
@@ -7917,6 +8866,32 @@
     "lemma": "veinticinco",
     "translations": [
      "twenty-five"
+    ]
+   }
+  },
+  {
+   "word": "venden",
+   "meaning": "they sell / do you sell",
+   "verdict": "confirmed",
+   "ok": {
+    "wordreference": true,
+    "spanishdict": true
+   },
+   "wordreference": {
+    "lemma": "vendar",
+    "translations": [
+     "bandage",
+     "sell",
+     "sell out",
+     "betray",
+     "be bought",
+     "blindfold"
+    ]
+   },
+   "spanishdict": {
+    "lemma": "vender",
+    "translations": [
+     "to sell"
     ]
    }
   },
