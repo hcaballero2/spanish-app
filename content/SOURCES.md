@@ -44,3 +44,23 @@ podcasts. All name the same four or five resources below.
 
 - **01 Comida callejera (A2):** Easy Spanish (Mexico City food-street episodes),
   Dreaming Spanish Beginner food videos, Butterfly Spanish food vocabulary.
+
+## Word meanings (glossary)
+
+Every glossary meaning is checked against dictionaries, never a machine
+translator. Each pack records the source per word in `glossarySources`, and the
+app links to it when a word is checked.
+
+- **WordReference** (wordreference.com) and **SpanishDict** (spanishdict.com):
+  checked automatically by `scripts/check-glossary.ts`. Results per pack are in
+  `content/checks/<pack>.glossary.json`.
+- **DEM**, the *Diccionario del español de México* by El Colegio de México
+  (dem.colmex.mx): checked by hand for Mexican words (antojito, tianguis,
+  suadero, tlacoyo…) and for words the first two don't confirm.
+- **name**: proper names (Lupita, Chucho, Roma) that no dictionary lists.
+- Sentence translations are written to match the checked glossary meanings.
+
+Pack 01 (2026-11-01): 198 of 213 confirmed automatically. The other 15 were
+checked by hand: most were matcher misses (conjugated verbs like *soy*, *es*),
+3 are names, and 9 meanings were reworded (e.g. *suadero* "beef brisket" →
+"beef cut from the chest", per DEM).

@@ -6,6 +6,7 @@ import TopBar from '../../components/TopBar'
 import Timer from '../../components/Timer'
 import { MC_ROUNDS, Rating, blankOut, buildQueue, correctCounts, formatSpan, previewDue, rateCard, type Grade, type QueueEntry } from '../../lib/fsrs'
 import { distractorPool, glossFor } from '../../lib/glossary'
+import GlossSources from '../../components/GlossSources'
 import { meaningMatches, pickDistractors, shuffled } from '../../lib/meaning'
 import { checkSpanish } from '../../lib/spanish'
 import { speak, ttsAvailable } from '../../lib/tts'
@@ -254,6 +255,7 @@ export default function ReviewScreen() {
                 {gloss && !meaningMatches(card.meaning, [gloss]) && <p className="text-sm text-muted">También: {gloss}</p>}
               </>
             )}
+            {gloss && <GlossSources word={card.lemma ?? ''} />}
             <div className="mt-3 flex items-start gap-2">
               <p className="flex-1 leading-relaxed">{card.exampleEs}</p>
               {ttsAvailable() && <SpeakButton onClick={() => say(card.exampleEs)} small />}

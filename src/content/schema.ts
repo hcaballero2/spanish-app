@@ -82,6 +82,9 @@ export const SourceSchema = z.strictObject({
   recommendedIn: z.string().min(1),
 })
 
+export const GlossSourceSchema = z.enum(['wordreference', 'spanishdict', 'dem', 'name'])
+export type GlossSource = z.infer<typeof GlossSourceSchema>
+
 export const ThemePackSchema = z
   .strictObject({
     id: z.string().regex(/^[a-z0-9-]+$/, 'kebab-case id'),
@@ -99,6 +102,13 @@ export const ThemePackSchema = z
      * learner's guessed meaning and to build multiple-choice review options.
      */
     glossary: z.record(z.string().regex(/^[\p{Ll}\p{N}'’-]+$/u, 'lowercase single word'), z.string().min(1)).optional(),
+    /**
+     * Where each glossary meaning was checked: WordReference, SpanishDict, DEM
+     * (Diccionario del español de México, for Mexican words), or "name" for a
+     * proper name no dictionary lists. Never a machine translator. See
+     * scripts/check-glossary.ts.
+     */
+    glossarySources: z.record(z.string(), z.array(GlossSourceSchema).min(1)).optional(),
     items: z.array(ItemSchema).min(1),
   })
   .superRefine((pack, ctx) => {

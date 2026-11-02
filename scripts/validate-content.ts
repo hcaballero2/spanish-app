@@ -65,6 +65,12 @@ for (const file of files) {
     if (item.skill !== 'reading' && item.skill !== 'listening') continue
     for (const s of item.segments) for (const t of tokenize(s.es)) if (t.key && !pack.glossary?.[t.key]) missing.add(t.key)
   }
+  // Every glossary meaning needs the dictionary it was checked in (no machine translation).
+  const unsourced = Object.keys(pack.glossary ?? {}).filter((k) => !pack.glossarySources?.[k])
+  if (unsourced.length > 0) {
+    errors++
+    notes.push(`  ✗ glossary has ${unsourced.length} word(s) without a source (run scripts/check-glossary.ts): ${unsourced.slice(0, 15).join(', ')}`)
+  }
   if (missing.size > 0) {
     warnings++
     notes.push(`  ⚠ glossary is missing ${missing.size} word(s): ${[...missing].slice(0, 15).join(', ')}${missing.size > 15 ? ', …' : ''}`)

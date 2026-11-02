@@ -21,6 +21,10 @@
     "oración": "sentence",
     "otra": "another / other"
   },
+  "glossarySources": {
+    "oración": ["wordreference", "spanishdict"],
+    "otra": ["wordreference", "spanishdict"]
+  },
   "items": [
     {
       "id": "template-reading-1",

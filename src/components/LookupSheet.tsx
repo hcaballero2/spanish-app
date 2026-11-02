@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Card } from '../db/types'
 import type { Selection } from './TappableText'
 import { glossFor } from '../lib/glossary'
+import GlossSources from './GlossSources'
 import { meaningMatches } from '../lib/meaning'
 
 interface Props {
@@ -101,6 +102,7 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
           <div className="mt-3 rounded-xl border border-ok bg-ok-soft p-3 text-sm" role="status">
             <p className="font-semibold text-ok">✓ ¡Bien!</p>
             <p className="mt-1 text-muted">Diccionario: {check.gloss}</p>
+            <GlossSources word={selection.key} />
           </div>
         )}
         {check?.kind === 'wrong' && (
@@ -109,6 +111,7 @@ export default function LookupSheet({ selection, existing, onSave, onDelete, onC
             <p className="mt-1">
               En este texto significa: <strong>{check.gloss}</strong>
             </p>
+            <GlossSources word={selection.key} />
           </div>
         )}
         {check?.kind === 'unknown' && (

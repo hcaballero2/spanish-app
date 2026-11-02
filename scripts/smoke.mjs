@@ -148,6 +148,9 @@ try {
     await evaluate(clickButton('Comprobar'))
     const body = await waitForText('No exactamente')
     if (!body.includes('corner')) throw new Error('glossary meaning not shown')
+    if (!body.includes('verificado en')) throw new Error('dictionary source not shown')
+    const href = await evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent === 'WordReference')?.href`)
+    if (href !== 'https://www.wordreference.com/es/en/translation.asp?spen=esquina') throw new Error(`source link: ${href}`)
     await waitForText('Guardar «corner»')
     await evaluate(clickButton('Cancelar'))
   })
@@ -158,6 +161,7 @@ try {
     await evaluate(typeInto('input[placeholder]', 'taco seller'))
     await evaluate(clickButton('Comprobar'))
     await waitForText('¡Bien!')
+    await waitForText('DEM (México)') // taquero: SpanishDict + DEM
     await evaluate(clickButton('Guardar tarjeta'))
     await waitForText('1 tarjeta de este texto')
     const stored = await evaluate(`(async () => {
