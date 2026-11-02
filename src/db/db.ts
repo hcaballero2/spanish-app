@@ -38,6 +38,10 @@ export class SpanishDB extends Dexie {
       themeProgress: 'themeId',
       recordings: '++id, itemId, createdAt',
     })
+    // English → Spanish cards have their own due date (`fsrsRev`).
+    this.version(2).stores({
+      cards: 'id, word, themeId, sourceItemId, fsrs.due, fsrsRev.due, createdAt',
+    })
   }
 }
 

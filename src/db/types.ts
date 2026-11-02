@@ -114,6 +114,8 @@ export interface Card {
   themeId: string
   createdAt: Date
   fsrs: FsrsState
+  /** English → Spanish (typed) schedule; created once the Spanish → English side has MC_ROUNDS correct answers. */
+  fsrsRev?: FsrsState
 }
 
 export interface Review {
@@ -123,6 +125,8 @@ export interface Review {
   reviewedAt: Date
   /** True when this was the card's first review (it was in the New state). Used for the new-cards-per-day cap. */
   wasNew?: boolean
+  /** 'rev' for an English → Spanish review; absent for Spanish → English. */
+  dir?: 'rev'
 }
 
 export interface Session {

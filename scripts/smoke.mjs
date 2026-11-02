@@ -96,14 +96,23 @@ try {
       pending.get(msg.id).resolve(msg.result ?? msg)
       pending.delete(msg.id)
     } else if (msg.method === 'Runtime.exceptionThrown') {
-      consoleErrors.push(msg.params.exceptionDetails.exception?.description ?? 'exception')
+      { const d = msg.params.exceptionDetails; consoleErrors.push([d.text, d.exception?.description, d.url + ':' + d.lineNumber + ':' + d.columnNumber].join(' | ').slice(0, 1500)) }
     } else if (msg.method === 'Runtime.consoleAPICalled' && msg.params.type === 'error') {
-      consoleErrors.push(msg.params.args.map((a) => a.value ?? a.description).join(' '))
+      consoleErrors.push(msg.params.args.map((a) => a.description ?? a.value ?? JSON.stringify(a.preview ?? a)).join(' ').slice(0, 800))
     }
   }
   await send('Runtime.enable')
   await send('Page.enable')
+  // Errors whose CDP description is just a class name (e.g. DexieError) get logged with message + stack.
+  await send('Page.addScriptToEvaluateOnNewDocument', { source: `addEventListener('error', (e) => console.error('[page]', e.error?.name, e.error?.message, e.error?.stack)); addEventListener('unhandledrejection', (e) => console.error('[page]', e.reason?.name, e.reason?.message, e.reason?.stack))` })
   await send('Page.navigate', { url: base + '#/' })
+
+  const idb = (body) => `(async () => {
+    const req = indexedDB.open('spanish-app')
+    const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error) })
+    const all = (store) => new Promise((res) => { const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess = () => res(r.result) })
+    ${body}
+  })()`
 
   await step('Home renders active theme', async () => {
     await waitForText('Comida callejera')
@@ -275,6 +284,25 @@ try {
     if (JSON.stringify(ratings) !== '[3,3,3]') throw new Error('override should rate Good: ' + JSON.stringify(ratings))
   })
 
+  await step('Review (English → Spanish): unlocked after 2 correct, typed in Spanish, own schedule', async () => {
+    // The card now has 2+ correct Spanish → English answers, so its reverse side is due.
+    await evaluate(`location.hash = '#/'`)
+    await waitForText('Repasar 1')
+    await evaluate(`location.hash = '#/review'`)
+    await waitForText('¿Cómo se dice en español?')
+    await waitForText('taco seller')
+    if ((await evaluate(`document.body.innerText`)).includes('taquero')) throw new Error('answer visible before answering')
+    await evaluate(typeInto('input[aria-label="Tu respuesta"]', ' Taquero. '))
+    await evaluate(clickButton('Comprobar'))
+    await waitForText('¡Correcto!')
+    await evaluate(clickButton('Siguiente'))
+    await waitForText('¡Listo!')
+    const rows = await evaluate(idb(`return (await all('reviews')).map(r => [r.rating, r.dir ?? 'fwd'])`))
+    if (JSON.stringify(rows.at(-1)) !== '[3,"rev"]') throw new Error('reverse review row: ' + JSON.stringify(rows))
+    const card = await evaluate(idb(`const c = (await all('cards')).find(c => c.word === 'taquero'); return { ...c, fsrsRev: { ...c.fsrsRev, due: c.fsrsRev?.due?.toISOString() } }`))
+    if (!(new Date(card.fsrsRev.due) > new Date()) || card.fsrsRev.reps !== 1) throw new Error('reverse schedule: ' + JSON.stringify(card.fsrsRev))
+  })
+
   await step('Listening screen: captions, sentence stepping, hide text, word tap', async () => {
     await evaluate(`location.hash = '#/theme/comida-callejera'`)
     await waitForText('Escucha')
@@ -304,13 +332,6 @@ try {
     }
     await waitForText('Escuchar y repetir')
   })
-
-  const idb = (body) => `(async () => {
-    const req = indexedDB.open('spanish-app')
-    const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error) })
-    const all = (store) => new Promise((res) => { const r = db.transaction(store).objectStore(store).getAll(); r.onsuccess = () => res(r.result) })
-    ${body}
-  })()`
 
   await step('Timer runs on a study screen and stores a reading session', async () => {
     await evaluate(`location.hash = '#/read/cc-reading-tacos'`)

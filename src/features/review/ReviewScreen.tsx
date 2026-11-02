@@ -2,12 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db/db'
-import type { Card } from '../../db/types'
 import TopBar from '../../components/TopBar'
 import Timer from '../../components/Timer'
-import { MC_ROUNDS, Rating, blankOut, buildQueue, correctCounts, formatSpan, previewDue, rateCard, type Grade } from '../../lib/fsrs'
+import { MC_ROUNDS, Rating, blankOut, buildQueue, correctCounts, formatSpan, previewDue, rateCard, type Grade, type QueueEntry } from '../../lib/fsrs'
 import { distractorPool, glossFor } from '../../lib/glossary'
 import { meaningMatches, pickDistractors, shuffled } from '../../lib/meaning'
+import { checkSpanish } from '../../lib/spanish'
 import { speak, ttsAvailable } from '../../lib/tts'
 
 /** The learner's answer to the card on screen, once given. */
@@ -15,17 +15,20 @@ interface Answer {
   correct: boolean
   choice?: string // multiple choice
   typed?: string // typed recall
+  accents?: boolean // English → Spanish: right apart from accents / ñ
 }
 
 /**
- * Flashcard review (PLAN §7.2), graded by the app: a card's first
- * MC_ROUNDS correct answers are multiple choice, after that the learner types
- * the meaning. Right → "Bien", wrong → "Otra vez" (FSRS ratings).
+ * Flashcard review (PLAN §7.2), graded by the app. Spanish → English: a card's
+ * first MC_ROUNDS correct answers are multiple choice, after that the learner
+ * types the meaning. English → Spanish (unlocked after that): the learner types
+ * the Spanish word, with the example sentence as a fill-in-the-blank hint;
+ * missing accents still count. Right → "Bien", wrong → "Otra vez" (FSRS ratings).
  */
 export default function ReviewScreen() {
   const settings = useLiveQuery(() => db.settings.get(1))
   const allCards = useLiveQuery(() => db.cards.toArray(), [])
-  const [queue, setQueue] = useState<Card[] | null>(null)
+  const [queue, setQueue] = useState<QueueEntry[] | null>(null)
   const [counts, setCounts] = useState<Map<string, number>>(new Map())
   const [answer, setAnswer] = useState<Answer | null>(null)
   const [typed, setTyped] = useState('')
@@ -38,7 +41,7 @@ export default function ReviewScreen() {
     if (!settings || queue) return
     let cancelled = false
     buildQueue(settings).then(async (q) => {
-      const c = await correctCounts(q.map((x) => x.id))
+      const c = await correctCounts(q.map((x) => x.card.id))
       if (cancelled) return
       setCounts(c)
       setQueue(q)
@@ -48,7 +51,8 @@ export default function ReviewScreen() {
     }
   }, [settings, queue])
 
-  const card = queue?.[0]
+  const card = queue?.[0]?.card
+  const reverse = queue?.[0]?.dir === 'rev'
   const gloss = card ? glossFor(card.lemma ?? '') : undefined
   const answers = card ? [card.meaning, ...(gloss ? [gloss] : [])] : []
 
@@ -61,7 +65,7 @@ export default function ReviewScreen() {
     return shuffled([card.meaning, ...pickDistractors(answers, pool, seed)], seed + 'o')
   }, [card?.id, card?.fsrs.reps, allCards === undefined])
   // Too few wrong options to make a fair question → typed recall instead.
-  const multipleChoice = !!card && (counts.get(card.id) ?? 0) < MC_ROUNDS && options.length >= 4
+  const multipleChoice = !!card && !reverse && (counts.get(card.id) ?? 0) < MC_ROUNDS && options.length >= 4
 
   useEffect(() => {
     if (card && !multipleChoice && !answer) {
@@ -79,11 +83,13 @@ export default function ReviewScreen() {
     setBusy(true)
     try {
       const now = new Date()
-      const updated = await rateCard(card, grade, now)
-      if (grade > 1) setCounts((m) => new Map(m).set(card.id, (m.get(card.id) ?? 0) + 1))
+      const dir = reverse ? 'rev' : 'fwd'
+      const updated = await rateCard(card, grade, now, dir)
+      if (grade > 1 && !reverse) setCounts((m) => new Map(m).set(card.id, (m.get(card.id) ?? 0) + 1))
       const rest = queue.slice(1)
+      const due = reverse ? updated.fsrsRev!.due : updated.fsrs.due
       // A miss (1-minute learning step) comes back later in this session.
-      if (updated.fsrs.due.getTime() - now.getTime() < 5 * 60_000) rest.push(updated)
+      if (due.getTime() - now.getTime() < 5 * 60_000) rest.push({ card: updated, dir })
       else setDone((d) => d + 1)
       setQueue(rest)
       setAnswer(null)
@@ -114,7 +120,7 @@ export default function ReviewScreen() {
   }
 
   const grade: Grade = answer?.correct ? Rating.Good : Rating.Again
-  const due = answer ? previewDue(card) : null
+  const due = answer ? previewDue(card, undefined, reverse ? 'rev' : 'fwd') : null
   const now = new Date()
 
   const choose = (opt: string) => {
@@ -128,6 +134,11 @@ export default function ReviewScreen() {
       return
     }
     input.current?.blur()
+    if (reverse) {
+      const result = giveUp ? 'wrong' : checkSpanish(typed, card.word)
+      setAnswer({ correct: result !== 'wrong', accents: result === 'accents', typed: giveUp ? '' : typed })
+      return
+    }
     setAnswer({ correct: !giveUp && meaningMatches(typed, answers), typed: giveUp ? '' : typed })
   }
 
@@ -147,14 +158,22 @@ export default function ReviewScreen() {
       />
       <main className="mx-auto flex max-w-md flex-col gap-4 p-5 pb-32">
         <section className="rounded-2xl border border-line bg-card p-5">
-          <p className="text-xs uppercase tracking-wide text-muted">
-            ¿Qué significa? · {multipleChoice ? 'elige' : 'escribe'}
-          </p>
-          <div className="mt-2 flex items-center gap-3">
-            <p className="text-2xl font-bold">{card.word}</p>
-            {ttsAvailable() && <SpeakButton onClick={() => say(card.word)} />}
-          </div>
-          <p className="mt-2 text-muted">{blankOut(card.exampleEs, card.word)}</p>
+          {reverse ? (
+            <>
+              <p className="text-xs uppercase tracking-wide text-muted">¿Cómo se dice en español? · escribe</p>
+              <p className="mt-2 text-2xl font-bold">{card.meaning}</p>
+              <p className="mt-2 text-muted">{blankOut(card.exampleEs, card.word)}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs uppercase tracking-wide text-muted">¿Qué significa? · {multipleChoice ? 'elige' : 'escribe'}</p>
+              <div className="mt-2 flex items-center gap-3">
+                <p className="text-2xl font-bold">{card.word}</p>
+                {ttsAvailable() && <SpeakButton onClick={() => say(card.word)} />}
+              </div>
+              <p className="mt-2 text-muted">{blankOut(card.exampleEs, card.word)}</p>
+            </>
+          )}
         </section>
 
         {multipleChoice ? (
@@ -196,7 +215,8 @@ export default function ReviewScreen() {
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               readOnly={!!answer}
-              placeholder="escribe el significado en inglés"
+              placeholder={reverse ? 'escribe en español' : 'escribe el significado en inglés'}
+              lang={reverse ? 'es' : 'en'}
               aria-label="Tu respuesta"
               autoCapitalize="off"
               autoCorrect="off"
@@ -221,10 +241,19 @@ export default function ReviewScreen() {
         {answer && (
           <section className="rounded-2xl border border-line bg-card p-5" role="status">
             <p className={`font-semibold ${answer.correct ? 'text-ok' : 'text-accent'}`}>
-              {answer.correct ? '✓ ¡Correcto!' : answer.typed === '' ? 'La respuesta:' : '✗ No exactamente.'}
+              {answer.accents ? '✓ Casi: fíjate en los acentos.' : answer.correct ? '✓ ¡Correcto!' : answer.typed === '' ? 'La respuesta:' : '✗ No exactamente.'}
             </p>
-            <p className="mt-1 text-xl font-semibold">{card.meaning}</p>
-            {gloss && !meaningMatches(card.meaning, [gloss]) && <p className="text-sm text-muted">También: {gloss}</p>}
+            {reverse ? (
+              <div className="mt-1 flex items-center gap-3">
+                <p className="text-xl font-semibold">{card.word}</p>
+                {ttsAvailable() && <SpeakButton onClick={() => say(card.word)} small />}
+              </div>
+            ) : (
+              <>
+                <p className="mt-1 text-xl font-semibold">{card.meaning}</p>
+                {gloss && !meaningMatches(card.meaning, [gloss]) && <p className="text-sm text-muted">También: {gloss}</p>}
+              </>
+            )}
             <div className="mt-3 flex items-start gap-2">
               <p className="flex-1 leading-relaxed">{card.exampleEs}</p>
               {ttsAvailable() && <SpeakButton onClick={() => say(card.exampleEs)} small />}
