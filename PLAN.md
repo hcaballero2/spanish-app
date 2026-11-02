@@ -400,6 +400,15 @@ Each pack contains at minimum: 2 reading, 2 listening (TTS) plus 1–3 video cli
 monologue, one dialogue), 1 writing, 1 grammar, 1 culture note. That is
 roughly 5–7 study days at 45 min/day.
 
+**«En las noticias»** (added 2026-11-01): one reading item per theme
+summarises, in my own A2 words, a real article from the last few weeks by a
+reputable outlet (BBC News Mundo, El Universal, El País México, Milenio, La
+Jornada…), tied to the theme. Never copy the article's text. Set `news
+{outlet, title, url, date}` (exact headline, publication date), add 3–10
+`keyWords` with my own examples and 3–5 questions. Only state facts the article
+gives; if its numbers disagree with each other, quote the specific ones, not
+its totals.
+
 ---
 
 ## 9. Daily flow (what the user experiences)

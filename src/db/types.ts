@@ -80,6 +80,8 @@ export interface Item {
   video?: { youtubeId: string; title: string; channel: string; start: number; end: number; embeddable: boolean }
   listenFor?: string
   keyWords?: { es: string; en: string; exampleEs: string; exampleEn: string }[]
+  // reading: easy summary of a real news article
+  news?: { outlet: string; title: string; url: string; date: string }
   // speaking
   mode?: 'monologue' | 'dialogue' | 'shadow'
   prompt?: string

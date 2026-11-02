@@ -41,6 +41,17 @@ const VideoSchema = z
   })
   .refine((v) => v.end > v.start, 'end must be after start')
 
+/**
+ * «En las noticias»: the reading text is my own A2 summary of a real, recent
+ * article from a reputable outlet; the app links to the original.
+ */
+const NewsSchema = z.strictObject({
+  outlet: z.string().min(1),
+  title: z.string().min(1), // the article's headline, exactly
+  url: z.url({ protocol: /^https$/ }),
+  date: z.iso.date(), // publication date, YYYY-MM-DD
+})
+
 const base = {
   id: z.string().regex(/^[a-z0-9-]+$/, 'kebab-case id'),
   level: LevelSchema,
@@ -49,12 +60,20 @@ const base = {
   estimatedMinutes: z.number().int().min(1).max(60),
 }
 
-const ReadingItem = z.strictObject({
-  ...base,
-  skill: z.literal('reading'),
-  segments: z.array(SegmentSchema).min(1),
-  questions: z.array(QuestionSchema).max(5).optional(),
-})
+/** A reading text, or (with `news` + `keyWords`) an easy summary of a news article. */
+const ReadingItem = z
+  .strictObject({
+    ...base,
+    skill: z.literal('reading'),
+    segments: z.array(SegmentSchema).min(1),
+    questions: z.array(QuestionSchema).max(5).optional(),
+    news: NewsSchema.optional(),
+    keyWords: z.array(KeyWordSchema).min(3).max(10).optional(),
+  })
+  .superRefine((item, ctx) => {
+    if (item.news && (!item.keyWords || !item.questions?.length))
+      ctx.addIssue({ code: 'custom', message: 'a news item needs keyWords and questions' })
+  })
 
 /** Either a TTS transcript (`segments`) or a real video clip (`video` + `listenFor` + `keyWords`). */
 const ListeningItem = z

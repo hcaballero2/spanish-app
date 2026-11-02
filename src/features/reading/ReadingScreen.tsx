@@ -11,7 +11,14 @@ import LevelBadge from '../../components/LevelBadge'
 import Comprehension from '../../components/Comprehension'
 import DoneButton from '../../components/DoneButton'
 import GlossToggle from '../../components/GlossToggle'
+import KeyWords from '../../components/KeyWords'
 import { markItemDone } from '../../lib/progress'
+
+/** "2026-10-27" → "27 oct 2026" (parsed as a calendar date, so no timezone shift). */
+function newsDate(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y!, m! - 1, d!).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+}
 
 export default function ReadingScreen() {
   const { itemId = '' } = useParams()
@@ -55,12 +62,25 @@ export default function ReadingScreen() {
         }
       />
       <main className="mx-auto max-w-md px-6 pb-32 pt-7">
+        {item.news && (
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-accent">En las noticias</p>
+        )}
         <h1 className="font-reading text-[26px] font-semibold leading-tight text-reading">{item.title}</h1>
+        {item.news && (
+          <p className="mt-3 rounded-xl border border-line bg-card p-3 text-sm text-muted">
+            Resumen fácil, con mis palabras, de una nota de <strong className="text-ink">{item.news.outlet}</strong> ({newsDate(item.news.date)}):{' '}
+            <a href={item.news.url} target="_blank" rel="noreferrer" className="text-accent underline">
+              «{item.news.title}» ↗
+            </a>
+          </p>
+        )}
         <p className="mb-7 mt-2 text-xs text-muted">
           {item.estimatedMinutes} min{cards.length < 3 ? ' · toca una palabra para guardarla; mantén y arrastra para una frase' : ''}
         </p>
 
         <TappableText segments={item.segments} known={known} onSelect={setSel} showAllGloss={showGloss} />
+
+        <KeyWords item={item} known={known} onSaved={() => flash('Tarjeta guardada')} />
 
         {item.questions && <Comprehension questions={item.questions} />}
 

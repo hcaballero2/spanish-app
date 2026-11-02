@@ -39,6 +39,26 @@
       "questions": [{ "q": "¿...?", "options": ["a", "b", "c"], "answer": 0 }]
     },
     {
+      "id": "template-news-1",
+      "skill": "reading",
+      "level": "A2",
+      "title": "Headline in easy Spanish",
+      "estimatedMinutes": 8,
+      "news": {
+        "outlet": "El Universal",
+        "title": "The article's exact headline",
+        "url": "https://...",
+        "date": "2026-10-27"
+      },
+      "segments": [{ "id": "n1-01", "es": "Resumen A2 con mis palabras.", "en": "A2 summary in my own words." }],
+      "keyWords": [
+        { "es": "palabra", "en": "word", "exampleEs": "Ejemplo propio.", "exampleEn": "My own example." },
+        { "es": "palabra", "en": "word", "exampleEs": "Ejemplo propio.", "exampleEn": "My own example." },
+        { "es": "palabra", "en": "word", "exampleEs": "Ejemplo propio.", "exampleEn": "My own example." }
+      ],
+      "questions": [{ "q": "¿...?", "options": ["a", "b", "c"], "answer": 0 }]
+    },
+    {
       "id": "template-listening-1",
       "skill": "listening",
       "level": "A2",

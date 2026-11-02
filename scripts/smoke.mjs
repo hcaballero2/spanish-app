@@ -128,7 +128,7 @@ try {
 
   await step('Home renders active theme', async () => {
     await waitForText('Comida callejera')
-    await waitForText('0 de 12 terminados')
+    await waitForText('0 de 13 terminados')
   })
 
   await step('Theme view lists items grouped by skill', async () => {
@@ -215,9 +215,9 @@ try {
     await waitForText("It's eight at night")
   })
 
-  await step('Mark done → theme shows 1 de 12', async () => {
+  await step('Mark done → theme shows 1 de 13', async () => {
     await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.includes('Marcar como terminado')).click()`)
-    await waitForText('1 de 12 terminados')
+    await waitForText('1 de 13 terminados')
   })
 
   await step('Home shows 1 due card and a review button', async () => {
@@ -356,6 +356,21 @@ try {
       if (!(await evaluate(`!!document.querySelector('button[aria-label="${label}"]')`))) throw new Error('missing ' + label)
     }
     await waitForText('Escuchar y repetir')
+  })
+
+  await step('News item: easy summary, outlet + date + link, key words, questions', async () => {
+    await evaluate(`location.hash = '#/theme/comida-callejera'`)
+    await waitForText('¿Cuánto cuesta el pan de muerto?')
+    await evaluate(`location.hash = '#/read/cc-news-pan-de-muerto'`)
+    const body = await waitForText('en las noticias')
+    if (!body.includes('el universal') || !body.includes('27 oct 2026')) throw new Error('outlet/date line: ' + body.slice(0, 400))
+    const href = await evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent.includes('Profeco compara'))?.href`)
+    if (!href?.startsWith('https://www.eluniversal.com.mx/tendencias/')) throw new Error('article link: ' + href)
+    await waitForText('Palabras clave')
+    await evaluate(`document.querySelector('button[aria-label="Guardar receta"]').click()`)
+    await waitForText('Tarjeta guardada')
+    await evaluate(clickButton('La Profeco'))
+    if (!(await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent === 'La Profeco').className.includes('bg-ok-soft')`))) throw new Error('answer not graded')
   })
 
   await step('Video clip: embedded player, key word saved, questions answerable', async () => {

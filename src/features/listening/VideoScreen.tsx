@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../db/db'
-import { cardsByKey, saveCard } from '../../lib/cards'
-import { wordKey } from '../../lib/words'
+import { cardsByKey } from '../../lib/cards'
 import { markItemDone } from '../../lib/progress'
 import TopBar from '../../components/TopBar'
 import Timer from '../../components/Timer'
 import LevelBadge from '../../components/LevelBadge'
 import Comprehension from '../../components/Comprehension'
 import DoneButton from '../../components/DoneButton'
+import KeyWords from '../../components/KeyWords'
 
 /** 75 → "1:15" */
 function clock(s: number): string {
@@ -99,36 +99,7 @@ export default function VideoScreen() {
           </a>
         </p>
 
-        {item.keyWords && (
-          <section className="mt-6">
-            <h2 className="font-semibold">Palabras clave</h2>
-            <ul className="mt-2 divide-y divide-line rounded-2xl border border-line bg-card">
-              {item.keyWords.map((k) => {
-                const saved = known.has(wordKey(k.es))
-                return (
-                  <li key={k.es} className="flex items-center gap-3 px-4 py-3">
-                    <div className="flex-1">
-                      <p className="font-medium">{k.es}</p>
-                      <p className="text-sm text-muted">{k.en}</p>
-                    </div>
-                    <button
-                      type="button"
-                      disabled={saved}
-                      aria-label={`Guardar ${k.es}`}
-                      onClick={async () => {
-                        await saveCard({ word: k.es, meaning: k.en, exampleEs: k.exampleEs, exampleEn: k.exampleEn, sourceItemId: item.id, themeId: item.themeId })
-                        flash('Tarjeta guardada')
-                      }}
-                      className="rounded-full border border-line px-3 py-1 text-sm text-accent disabled:text-muted"
-                    >
-                      {saved ? '✓' : '+ Guardar'}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </section>
-        )}
+        <KeyWords item={item} known={known} onSaved={() => flash('Tarjeta guardada')} />
 
         {item.questions && <Comprehension questions={item.questions} />}
 

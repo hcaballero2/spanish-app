@@ -50,6 +50,14 @@ podcasts. All name the same four or five resources below.
     Michelle - Beginner Spanish» (0:12–3:02). Butterfly Spanish's food video was
     not used: it is mostly explained in English.
 
+- **News (pack 01, 2026-11-01):** El Universal, «¿En dónde es más barato?
+  Profeco compara precios de pan de muerto por pieza; conoce una receta
+  casera» (Miriam De Santos Morales, 27 Oct 2026),
+  https://www.eluniversal.com.mx/tendencias/en-donde-es-mas-barato-profeco-compara-precios-de-pan-de-muerto-por-pieza-conoce-una-receta-casera/
+  — the app shows my own A2 summary and links to it. The article's two
+  "average" prices don't match its own table, so the summary quotes the
+  per-store prices only.
+
 ## Word meanings (glossary)
 
 Every glossary meaning is checked against dictionaries, never a machine

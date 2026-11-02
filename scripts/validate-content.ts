@@ -64,7 +64,7 @@ for (const file of files) {
   for (const item of pack.items) {
     if (item.skill !== 'reading' && item.skill !== 'listening') continue
     const texts = [...(item.segments ?? []).map((s) => s.es), ...(item.keyWords ?? []).flatMap((k) => [k.es, k.exampleEs])]
-    for (const text of texts) for (const t of tokenize(text)) if (t.key && !pack.glossary?.[t.key]) missing.add(t.key)
+    for (const text of texts) for (const t of tokenize(text)) if (t.key && !/^\d+$/.test(t.key) && !pack.glossary?.[t.key]) missing.add(t.key) // numerals need no meaning
   }
   // Every glossary meaning needs the dictionary it was checked in (no machine translation).
   const unsourced = Object.keys(pack.glossary ?? {}).filter((k) => !pack.glossarySources?.[k])
